@@ -23,9 +23,13 @@ import {
   MousePointerClick,
   Check,
   AlertCircle,
-  Layout
+  Layout,
+  ShoppingBag,
+  Briefcase,
+  MonitorPlay,
+  User
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence, useInView, animate } from 'motion/react';
 import CheckoutModal from './components/CheckoutModal';
 
 // --- Components ---
@@ -147,6 +151,28 @@ const CountdownTimer = () => {
       <div className="flex flex-col items-center leading-none"><span className="font-bold text-sm">{String(timeLeft.seconds).padStart(2, '0')}</span><span className="text-[8px] uppercase opacity-70">sec</span></div>
     </div>
   );
+};
+
+const AnimatedCounter = ({ value, suffix = "", prefix = "" }: { value: number, suffix?: string, prefix?: string }) => {
+  const nodeRef = React.useRef<HTMLSpanElement>(null);
+  const inView = useInView(nodeRef, { once: true, margin: "-50px" });
+
+  useEffect(() => {
+    const node = nodeRef.current;
+    if (!node || !inView) return;
+    
+    const controls = animate(0, value, {
+      duration: 2,
+      ease: "easeOut",
+      onUpdate(val) {
+        node.textContent = `${prefix}${Math.round(val)}${suffix}`;
+      }
+    });
+    
+    return () => controls.stop();
+  }, [value, prefix, suffix, inView]);
+
+  return <span ref={nodeRef}>0</span>;
 };
 
 // --- Main App ---
@@ -895,14 +921,14 @@ export default function App() {
           
           <div className="grid sm:grid-cols-2 gap-6">
             {[
-              { title: "Product Vendors", desc: "If you sell physical goods and get 'how much' inquiries all day." },
-              { title: "Service Providers", desc: "If you handle bookings and client inquiries via WhatsApp." },
-              { title: "Digital Sellers", desc: "If you sell courses, ebooks, or access and need to close leads." },
-              { title: "Solo Operators", desc: "If you handle your own sales and need a faster, better system." }
+              { title: "Product Vendors", desc: "If you sell physical goods and get 'how much' inquiries all day.", icon: <ShoppingBag className="w-5 h-5 text-zinc-400 group-hover:text-[#25D366] transition-colors" /> },
+              { title: "Service Providers", desc: "If you handle bookings and client inquiries via WhatsApp.", icon: <Briefcase className="w-5 h-5 text-zinc-400 group-hover:text-[#25D366] transition-colors" /> },
+              { title: "Digital Sellers", desc: "If you sell courses, ebooks, or access and need to close leads.", icon: <MonitorPlay className="w-5 h-5 text-zinc-400 group-hover:text-[#25D366] transition-colors" /> },
+              { title: "Solo Operators", desc: "If you handle your own sales and need a faster, better system.", icon: <User className="w-5 h-5 text-zinc-400 group-hover:text-[#25D366] transition-colors" /> }
             ].map((item, i) => (
               <div key={i} className="p-8 rounded-[32px] bg-zinc-50 border border-zinc-100 hover:bg-white hover:shadow-xl transition-all group">
-                <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center mb-6 group-hover:bg-green-50 transition-colors">
-                  <CheckCircle2 className="w-5 h-5 text-zinc-300 group-hover:text-[#25D366] transition-colors" />
+                <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center mb-6 group-hover:bg-green-50 transition-colors shadow-sm">
+                  {item.icon}
                 </div>
                 <h3 className="text-xl font-black mb-2 text-zinc-900">{item.title}</h3>
                 <p className="text-zinc-500 text-sm font-medium leading-relaxed">{item.desc}</p>
@@ -1004,6 +1030,35 @@ export default function App() {
               We use a secure, passwordless magic link system. Getting access takes less than 60 seconds.
             </p>
           </div>
+
+          {/* Animated Stats Bar */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16">
+            <div className="bg-white p-6 rounded-3xl border border-zinc-100 shadow-sm text-center">
+              <div className="text-3xl font-black text-[#128C7E] mb-1">
+                <AnimatedCounter value={100} suffix="+" />
+              </div>
+              <div className="text-xs font-bold text-zinc-500 uppercase tracking-widest">Copy-Ready Scripts</div>
+            </div>
+            <div className="bg-white p-6 rounded-3xl border border-zinc-100 shadow-sm text-center">
+              <div className="text-3xl font-black text-[#128C7E] mb-1">
+                <AnimatedCounter value={60} prefix="< " suffix="s" />
+              </div>
+              <div className="text-xs font-bold text-zinc-500 uppercase tracking-widest">Access Speed</div>
+            </div>
+            <div className="bg-white p-6 rounded-3xl border border-zinc-100 shadow-sm text-center">
+              <div className="text-3xl font-black text-[#128C7E] mb-1">
+                <AnimatedCounter value={24} suffix="/7" />
+              </div>
+              <div className="text-xs font-bold text-zinc-500 uppercase tracking-widest">Lifetime Access</div>
+            </div>
+            <div className="bg-white p-6 rounded-3xl border border-zinc-100 shadow-sm text-center">
+              <div className="text-3xl font-black text-[#128C7E] mb-1">
+                <AnimatedCounter value={100} suffix="%" />
+              </div>
+              <div className="text-xs font-bold text-zinc-500 uppercase tracking-widest">Secure Checkout</div>
+            </div>
+          </div>
+
           <div className="grid md:grid-cols-3 gap-8">
             {[
               {

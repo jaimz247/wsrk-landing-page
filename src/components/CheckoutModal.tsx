@@ -11,7 +11,7 @@ interface CheckoutModalProps {
 }
 
 export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
-  const [step, setStep] = useState<1 | 2 | 3>(1);
+  const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
@@ -42,6 +42,23 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
     }
   }, [isOpen]);
 
+  // Mock backend for coupons and referrals
+  const getCouponUsage = (code: string) => {
+    const usage = localStorage.getItem(`coupon_usage_${code}`);
+    return usage ? parseInt(usage, 10) : 0;
+  };
+
+  const incrementCouponUsage = (code: string) => {
+    const usage = getCouponUsage(code);
+    localStorage.setItem(`coupon_usage_${code}`, (usage + 1).toString());
+  };
+
+  const recordReferral = (referralCode: string, newCustomerEmail: string, amount: number) => {
+    const referrals = JSON.parse(localStorage.getItem('referrals') || '[]');
+    referrals.push({ code: referralCode, customer: newCustomerEmail, amount, date: new Date().toISOString() });
+    localStorage.setItem('referrals', JSON.stringify(referrals));
+  };
+
   const handleApplyCoupon = async () => {
     if (!couponCode.trim()) return;
     setIsApplyingCoupon(true);
@@ -51,15 +68,32 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
     await new Promise(resolve => setTimeout(resolve, 600));
     
     const code = couponCode.trim().toUpperCase();
+    const usage = getCouponUsage(code);
+
     if (code === 'RESCUE20') {
-      setDiscount(basePrice * 0.2);
-      setCouponMessage({ type: 'success', text: '20% discount applied!' });
+      if (usage >= 100) {
+        setDiscount(0);
+        setCouponMessage({ type: 'error', text: 'This coupon has reached its usage limit.' });
+      } else {
+        setDiscount(basePrice * 0.2);
+        setCouponMessage({ type: 'success', text: '20% discount applied!' });
+      }
     } else if (code === 'VIP50') {
-      setDiscount(basePrice * 0.5);
-      setCouponMessage({ type: 'success', text: '50% discount applied!' });
+      if (usage >= 50) {
+        setDiscount(0);
+        setCouponMessage({ type: 'error', text: 'This coupon has reached its usage limit.' });
+      } else {
+        setDiscount(basePrice * 0.5);
+        setCouponMessage({ type: 'success', text: '50% discount applied!' });
+      }
     } else if (code === 'FREEPASS') {
-      setDiscount(basePrice);
-      setCouponMessage({ type: 'success', text: '100% discount applied! Checkout is free.' });
+      if (usage >= 10) {
+        setDiscount(0);
+        setCouponMessage({ type: 'error', text: 'This coupon has reached its usage limit.' });
+      } else {
+        setDiscount(basePrice);
+        setCouponMessage({ type: 'success', text: '100% discount applied! Checkout is free.' });
+      }
     } else if (code.startsWith('REF-') && code.length > 4) {
       setDiscount(1000); // ₦1,000 off for referrals
       setCouponMessage({ type: 'success', text: 'Referral discount applied (₦1,000 off)!' });
@@ -70,25 +104,64 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
     setIsApplyingCoupon(false);
   };
 
+  const removeCoupon = () => {
+    setCouponCode('');
+    setDiscount(0);
+    setCouponMessage(null);
+  };
+
   const sendReceipt = async (transactionRef: string) => {
+    // If the user paid money, the payment gateways (Paystack, Flutterwave, PayPal) 
+    // will automatically send a secure webhook to the portal. We don't need to do anything here.
+    if (finalPrice > 0) {
+      console.log(`[Checkout] Paid transaction completed. Payment gateway will send webhook to portal.`);
+      return;
+    }
+
+    // However, if the user used a 100% FREEPASS, the payment gateways are bypassed.
+    // We MUST send a manual webhook to the portal to grant them access.
     try {
-      // In a real application, you would send this to your backend or a webhook (e.g., Zapier/Make)
-      console.log(`[Mock] Sending receipt to ${email} for transaction ${transactionRef}`);
-      console.log(`[Mock] Receipt details: Name: ${name}, Amount: ₦${finalPrice}, Date: ${new Date().toLocaleString()}`);
-      // Example implementation:
-      // await fetch('https://your-api.com/send-receipt', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ email, name, amount: finalPrice, ref: transactionRef, date: new Date().toISOString() })
-      // });
+      const freeAccessWebhookUrl = import.meta.env.VITE_PORTAL_FREE_WEBHOOK_URL || 'https://app.chatsalesrescue.com/api/webhooks/free-access';
+      const freeAccessSecret = import.meta.env.VITE_FREE_ACCESS_SECRET || 'FREEPASS';
+      
+      console.log(`[Checkout] Free access granted. Sending manual webhook to portal...`);
+      
+      const payload = {
+        email: email
+      };
+
+      const response = await fetch(freeAccessWebhookUrl, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'x-free-access-secret': freeAccessSecret
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (!response.ok) {
+        console.error("Failed to whitelist free user on the portal. Status:", response.status);
+      } else {
+        console.log("Successfully whitelisted free user on the portal.");
+      }
     } catch (e) {
-      console.error("Failed to send receipt", e);
+      console.error("Network error while communicating with portal for free access", e);
     }
   };
 
   const handleSuccess = (transactionRef: string) => {
-    setStep(3);
+    setStep(4);
     sendReceipt(transactionRef);
+    
+    if (couponCode.trim()) {
+      const code = couponCode.trim().toUpperCase();
+      if (['RESCUE20', 'VIP50', 'FREEPASS'].includes(code)) {
+        incrementCouponUsage(code);
+      } else if (code.startsWith('REF-')) {
+        recordReferral(code, email, finalPrice);
+      }
+    }
+
     setTimeout(() => {
       window.location.href = 'https://app.chatsalesrescue.com/access';
     }, 3000);
@@ -210,23 +283,30 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
           {/* Content */}
           <div className="p-6 sm:p-8">
             {/* Stepper Progress */}
-            <div className="flex items-center justify-between mb-8 relative px-2">
-              <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-zinc-100 -z-10 rounded-full"></div>
-              <div 
-                className="absolute left-0 top-1/2 -translate-y-1/2 h-1 bg-[#25D366] -z-10 rounded-full transition-all duration-500 ease-out" 
-                style={{ width: step === 1 ? '0%' : step === 2 ? '50%' : '100%' }}
-              ></div>
-              
-              {[1, 2, 3].map((s) => (
-                <div key={s} className="flex flex-col items-center gap-2">
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-colors duration-300 ${step >= s ? 'bg-[#25D366] text-white shadow-lg shadow-green-500/30' : 'bg-white border-2 border-zinc-200 text-zinc-400'}`}>
-                    {step > s ? <CheckCircle2 className="w-4 h-4" /> : s}
+            <div className="mb-8">
+              <div className="flex justify-between items-center mb-4 px-2">
+                <h4 className="text-xs font-black text-zinc-900 uppercase tracking-widest">
+                  Step {step} of 4
+                </h4>
+                <span className="text-xs font-bold text-[#25D366]">
+                  {step === 1 ? 'Details' : step === 2 ? 'Summary' : step === 3 ? 'Payment' : 'Success'}
+                </span>
+              </div>
+              <div className="flex items-center justify-between relative px-2">
+                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1.5 bg-zinc-100 -z-10 rounded-full"></div>
+                <div 
+                  className="absolute left-0 top-1/2 -translate-y-1/2 h-1.5 bg-[#25D366] -z-10 rounded-full transition-all duration-500 ease-out" 
+                  style={{ width: step === 1 ? '0%' : step === 2 ? '33.33%' : step === 3 ? '66.66%' : '100%' }}
+                ></div>
+                
+                {[1, 2, 3, 4].map((s) => (
+                  <div key={s} className="flex flex-col items-center gap-2">
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-colors duration-300 ${step >= s ? 'bg-[#25D366] text-white shadow-lg shadow-green-500/30' : 'bg-white border-2 border-zinc-200 text-zinc-400'}`}>
+                      {step > s ? <CheckCircle2 className="w-4 h-4" /> : s}
+                    </div>
                   </div>
-                  <span className={`text-[10px] font-bold uppercase tracking-wider transition-colors duration-300 ${step >= s ? 'text-zinc-900' : 'text-zinc-400'}`}>
-                    {s === 1 ? 'Details' : s === 2 ? 'Payment' : 'Success'}
-                  </span>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
 
             {step === 1 && (
@@ -307,8 +387,26 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                 exit={{ opacity: 0, x: -20 }}
               >
                 <div className="mb-6 text-center">
-                  <h4 className="text-2xl font-black text-zinc-900 mb-2">Select Payment Method</h4>
-                  <p className="text-zinc-500 font-medium">Choose how you'd like to pay ₦{finalPrice.toLocaleString()} securely.</p>
+                  <h4 className="text-2xl font-black text-zinc-900 mb-2">Order Summary</h4>
+                  <p className="text-zinc-500 font-medium">Review your order and apply any discounts.</p>
+                </div>
+
+                <div className="bg-zinc-50 rounded-xl p-5 mb-6 border border-zinc-200">
+                  <div className="flex justify-between items-center mb-3">
+                    <span className="text-zinc-600 font-medium">WhatsApp Sales Rescue Kit</span>
+                    <span className="font-bold text-zinc-900">₦{basePrice.toLocaleString()}</span>
+                  </div>
+                  {discount > 0 && (
+                    <div className="flex justify-between items-center mb-3 text-[#25D366]">
+                      <span className="font-medium">Discount Applied</span>
+                      <span className="font-bold">-₦{discount.toLocaleString()}</span>
+                    </div>
+                  )}
+                  <div className="h-px bg-zinc-200 w-full my-4"></div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-lg font-bold text-zinc-900">Total</span>
+                    <span className="text-2xl font-black text-zinc-900">₦{finalPrice.toLocaleString()}</span>
+                  </div>
                 </div>
 
                 {/* Coupon / Referral Code Section */}
@@ -322,18 +420,44 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                       <input 
                         type="text"
                         value={couponCode}
-                        onChange={(e) => setCouponCode(e.target.value)}
+                        onChange={(e) => {
+                          setCouponCode(e.target.value);
+                          if (couponMessage) setCouponMessage(null);
+                        }}
+                        disabled={discount > 0}
                         placeholder="e.g. REF-1234 or WSRK20"
-                        className="w-full pl-9 pr-3 py-2.5 bg-white border border-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#25D366] focus:border-transparent font-medium text-sm transition-all uppercase"
+                        className={`w-full pl-9 pr-10 py-2.5 bg-white border rounded-lg focus:outline-none focus:ring-2 focus:border-transparent font-medium text-sm transition-all uppercase ${
+                          couponMessage?.type === 'success' ? 'border-[#25D366] focus:ring-[#25D366]' : 
+                          couponMessage?.type === 'error' ? 'border-red-500 focus:ring-red-500' : 
+                          'border-zinc-200 focus:ring-[#25D366]'
+                        } disabled:bg-zinc-100 disabled:text-zinc-500`}
                       />
+                      {couponMessage && (
+                        <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                          {couponMessage.type === 'success' ? (
+                            <CheckCircle2 className="w-5 h-5 text-[#25D366]" />
+                          ) : (
+                            <X className="w-5 h-5 text-red-500" />
+                          )}
+                        </div>
+                      )}
                     </div>
-                    <button 
-                      onClick={handleApplyCoupon}
-                      disabled={isApplyingCoupon || !couponCode.trim()}
-                      className="px-4 py-2.5 bg-zinc-900 text-white text-sm font-bold rounded-lg hover:bg-zinc-800 transition-colors disabled:opacity-50 flex items-center justify-center min-w-[80px]"
-                    >
-                      {isApplyingCoupon ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Apply'}
-                    </button>
+                    {discount > 0 ? (
+                      <button 
+                        onClick={removeCoupon}
+                        className="px-4 py-2.5 bg-red-50 text-red-600 border border-red-200 text-sm font-bold rounded-lg hover:bg-red-100 transition-colors flex items-center justify-center min-w-[80px]"
+                      >
+                        Remove
+                      </button>
+                    ) : (
+                      <button 
+                        onClick={handleApplyCoupon}
+                        disabled={isApplyingCoupon || !couponCode.trim()}
+                        className="px-4 py-2.5 bg-zinc-900 text-white text-sm font-bold rounded-lg hover:bg-zinc-800 transition-colors disabled:opacity-50 flex items-center justify-center min-w-[80px]"
+                      >
+                        {isApplyingCoupon ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Apply'}
+                      </button>
+                    )}
                   </div>
                   <AnimatePresence>
                     {couponMessage && (
@@ -341,12 +465,42 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                         initial={{ opacity: 0, height: 0, marginTop: 0 }}
                         animate={{ opacity: 1, height: 'auto', marginTop: 8 }}
                         exit={{ opacity: 0, height: 0, marginTop: 0 }}
-                        className={`text-xs font-bold ${couponMessage.type === 'success' ? 'text-[#25D366]' : 'text-red-500'}`}
+                        className={`text-xs font-bold flex items-center gap-1.5 ${couponMessage.type === 'success' ? 'text-[#25D366]' : 'text-red-500'}`}
                       >
+                        {couponMessage.type === 'success' ? <CheckCircle2 className="w-3.5 h-3.5" /> : <AlertCircle className="w-3.5 h-3.5" />}
                         {couponMessage.text}
                       </motion.div>
                     )}
                   </AnimatePresence>
+                </div>
+
+                <div className="space-y-4">
+                  <button 
+                    onClick={() => setStep(3)}
+                    className="w-full py-4 bg-[#25D366] text-white rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-[#20bd5a] transition-colors"
+                  >
+                    Confirm & Proceed to Payment
+                    <ArrowRight className="w-5 h-5" />
+                  </button>
+                  <button 
+                    onClick={() => setStep(1)}
+                    className="w-full py-3 text-sm font-bold text-zinc-500 hover:text-zinc-900 transition-colors"
+                  >
+                    Back to Details
+                  </button>
+                </div>
+              </motion.div>
+            )}
+
+            {step === 3 && (
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+              >
+                <div className="mb-6 text-center">
+                  <h4 className="text-2xl font-black text-zinc-900 mb-2">Select Payment Method</h4>
+                  <p className="text-zinc-500 font-medium">Choose how you'd like to pay ₦{finalPrice.toLocaleString()} securely.</p>
                 </div>
 
                 <AnimatePresence>
@@ -444,17 +598,17 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                   )}
 
                   <button 
-                    onClick={() => setStep(1)}
+                    onClick={() => setStep(2)}
                     disabled={isProcessing}
                     className="w-full py-3 text-sm font-bold text-zinc-500 hover:text-zinc-900 transition-colors"
                   >
-                    Back to Details
+                    Back to Order Summary
                   </button>
                 </div>
               </motion.div>
             )}
 
-            {step === 3 && (
+            {step === 4 && (
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
