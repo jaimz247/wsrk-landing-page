@@ -51,9 +51,15 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
     await new Promise(resolve => setTimeout(resolve, 600));
     
     const code = couponCode.trim().toUpperCase();
-    if (code === 'WSRK20') {
+    if (code === 'RESCUE20') {
       setDiscount(basePrice * 0.2);
       setCouponMessage({ type: 'success', text: '20% discount applied!' });
+    } else if (code === 'VIP50') {
+      setDiscount(basePrice * 0.5);
+      setCouponMessage({ type: 'success', text: '50% discount applied!' });
+    } else if (code === 'FREEPASS') {
+      setDiscount(basePrice);
+      setCouponMessage({ type: 'success', text: '100% discount applied! Checkout is free.' });
     } else if (code.startsWith('REF-') && code.length > 4) {
       setDiscount(1000); // ₦1,000 off for referrals
       setCouponMessage({ type: 'success', text: 'Referral discount applied (₦1,000 off)!' });
@@ -358,72 +364,84 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                 </AnimatePresence>
 
                 <div className="space-y-4">
-                  <button 
-                    onClick={handlePaystack}
-                    disabled={isProcessing}
-                    className="w-full p-4 border-2 border-zinc-200 rounded-xl flex items-center justify-between hover:border-[#0ba4db] hover:bg-[#0ba4db]/5 transition-all group disabled:opacity-50"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-white border border-zinc-100 rounded-lg flex items-center justify-center p-1.5 shadow-sm">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/0/0b/Paystack_Logo.png" alt="Paystack" className="w-full h-full object-contain" />
-                      </div>
-                      <span className="font-bold text-zinc-900">Pay with Paystack</span>
-                    </div>
-                    <ArrowRight className="w-5 h-5 text-zinc-400 group-hover:text-[#0ba4db] transition-colors" />
-                  </button>
+                  {finalPrice === 0 ? (
+                    <button 
+                      onClick={() => handleSuccess(`FREE-${Date.now()}`)}
+                      className="w-full p-4 bg-[#25D366] text-white font-bold rounded-xl flex items-center justify-center gap-2 hover:bg-[#20bd5a] transition-colors"
+                    >
+                      <span>Claim Free Access</span>
+                      <ArrowRight className="w-5 h-5" />
+                    </button>
+                  ) : (
+                    <>
+                      <button 
+                        onClick={handlePaystack}
+                        disabled={isProcessing}
+                        className="w-full p-4 border-2 border-zinc-200 rounded-xl flex items-center justify-between hover:border-[#0ba4db] hover:bg-[#0ba4db]/5 transition-all group disabled:opacity-50"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 bg-white border border-zinc-100 rounded-lg flex items-center justify-center p-1.5 shadow-sm">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/0/0b/Paystack_Logo.png" alt="Paystack" className="w-full h-full object-contain" />
+                          </div>
+                          <span className="font-bold text-zinc-900">Pay with Paystack</span>
+                        </div>
+                        <ArrowRight className="w-5 h-5 text-zinc-400 group-hover:text-[#0ba4db] transition-colors" />
+                      </button>
 
-                  <button 
-                    onClick={handleFlutterwave}
-                    disabled={isProcessing}
-                    className="w-full p-4 border-2 border-zinc-200 rounded-xl flex items-center justify-between hover:border-[#F5A623] hover:bg-[#F5A623]/5 transition-all group disabled:opacity-50"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-white border border-zinc-100 rounded-lg flex items-center justify-center p-1.5 shadow-sm">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/8/8b/Flutterwave_Logo.png" alt="Flutterwave" className="w-full h-full object-contain" />
-                      </div>
-                      <span className="font-bold text-zinc-900">Pay with Flutterwave</span>
-                    </div>
-                    <ArrowRight className="w-5 h-5 text-zinc-400 group-hover:text-[#F5A623] transition-colors" />
-                  </button>
+                      <button 
+                        onClick={handleFlutterwave}
+                        disabled={isProcessing}
+                        className="w-full p-4 border-2 border-zinc-200 rounded-xl flex items-center justify-between hover:border-[#F5A623] hover:bg-[#F5A623]/5 transition-all group disabled:opacity-50"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 bg-white border border-zinc-100 rounded-lg flex items-center justify-center p-1.5 shadow-sm">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/8/8b/Flutterwave_Logo.png" alt="Flutterwave" className="w-full h-full object-contain" />
+                          </div>
+                          <span className="font-bold text-zinc-900">Pay with Flutterwave</span>
+                        </div>
+                        <ArrowRight className="w-5 h-5 text-zinc-400 group-hover:text-[#F5A623] transition-colors" />
+                      </button>
 
-                  <div className="pt-4 border-t border-zinc-100 relative z-0">
-                    <PayPalScriptProvider options={{ clientId: import.meta.env.VITE_PAYPAL_CLIENT_ID || "test", currency: "USD" }}>
-                      <PayPalButtons 
-                        style={{ layout: "vertical", shape: "rect", color: "gold" }}
-                        onError={(err) => {
-                          setError("PayPal encountered an issue processing your request. This might be due to a temporary network issue or a restriction on your PayPal account. Please try another payment method.");
-                          setIsProcessing(false);
-                        }}
-                        onCancel={() => {
-                          setError("PayPal checkout was cancelled before completion. Please try again or select a different payment method.");
-                          setIsProcessing(false);
-                        }}
-                        createOrder={(data, actions) => {
-                          setError(null);
-                          return actions.order.create({
-                            intent: "CAPTURE",
-                            purchase_units: [
-                              {
-                                amount: {
-                                  currency_code: "USD",
-                                  value: finalPaypalPrice.toFixed(2),
-                                },
-                                description: "WhatsApp Sales Rescue Kit"
-                              },
-                            ],
-                          });
-                        }}
-                        onApprove={async (data, actions) => {
-                          if (actions.order) {
-                            const details = await actions.order.capture();
-                            if (details.status === "COMPLETED") {
-                              handleSuccess(details.id);
-                            }
-                          }
-                        }}
-                      />
-                    </PayPalScriptProvider>
-                  </div>
+                      <div className="pt-4 border-t border-zinc-100 relative z-0">
+                        <PayPalScriptProvider options={{ clientId: import.meta.env.VITE_PAYPAL_CLIENT_ID || "test", currency: "USD" }}>
+                          <PayPalButtons 
+                            style={{ layout: "vertical", shape: "rect", color: "gold" }}
+                            onError={(err) => {
+                              setError("PayPal encountered an issue processing your request. This might be due to a temporary network issue or a restriction on your PayPal account. Please try another payment method.");
+                              setIsProcessing(false);
+                            }}
+                            onCancel={() => {
+                              setError("PayPal checkout was cancelled before completion. Please try again or select a different payment method.");
+                              setIsProcessing(false);
+                            }}
+                            createOrder={(data, actions) => {
+                              setError(null);
+                              return actions.order.create({
+                                intent: "CAPTURE",
+                                purchase_units: [
+                                  {
+                                    amount: {
+                                      currency_code: "USD",
+                                      value: finalPaypalPrice.toFixed(2),
+                                    },
+                                    description: "WhatsApp Sales Rescue Kit"
+                                  },
+                                ],
+                              });
+                            }}
+                            onApprove={async (data, actions) => {
+                              if (actions.order) {
+                                const details = await actions.order.capture();
+                                if (details.status === "COMPLETED") {
+                                  handleSuccess(details.id);
+                                }
+                              }
+                            }}
+                          />
+                        </PayPalScriptProvider>
+                      </div>
+                    </>
+                  )}
 
                   <button 
                     onClick={() => setStep(1)}
