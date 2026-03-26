@@ -27,10 +27,17 @@ import {
   ShoppingBag,
   Briefcase,
   MonitorPlay,
-  User
+  User,
+  Facebook,
+  Twitter,
+  Linkedin,
+  Share2
 } from 'lucide-react';
 import { motion, AnimatePresence, useInView, animate } from 'motion/react';
 import CheckoutModal from './components/CheckoutModal';
+
+import { Link } from 'react-router-dom';
+import CookieConsent from './components/CookieConsent';
 
 // --- Components ---
 
@@ -262,7 +269,37 @@ export default function App() {
                 </p>
               </div>
 
-              <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-4">
+              {/* Social Sharing */}
+              <div className="flex items-center gap-4 mt-2">
+                <span className="text-xs font-bold text-zinc-400 uppercase tracking-widest flex items-center gap-1.5">
+                  <Share2 className="w-3.5 h-3.5" /> Share
+                </span>
+                <div className="flex gap-2">
+                  <button 
+                    onClick={() => window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`, '_blank')}
+                    className="w-8 h-8 rounded-full bg-zinc-100 hover:bg-[#1877F2] hover:text-white text-zinc-500 flex items-center justify-center transition-colors"
+                    aria-label="Share on Facebook"
+                  >
+                    <Facebook className="w-4 h-4" />
+                  </button>
+                  <button 
+                    onClick={() => window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent('Stop losing buyers on WhatsApp. Check out the WhatsApp Sales Rescue Kit!')}`, '_blank')}
+                    className="w-8 h-8 rounded-full bg-zinc-100 hover:bg-[#1DA1F2] hover:text-white text-zinc-500 flex items-center justify-center transition-colors"
+                    aria-label="Share on Twitter"
+                  >
+                    <Twitter className="w-4 h-4" />
+                  </button>
+                  <button 
+                    onClick={() => window.open(`https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(window.location.href)}&title=${encodeURIComponent('WhatsApp Sales Rescue Kit')}`, '_blank')}
+                    className="w-8 h-8 rounded-full bg-zinc-100 hover:bg-[#0A66C2] hover:text-white text-zinc-500 flex items-center justify-center transition-colors"
+                    aria-label="Share on LinkedIn"
+                  >
+                    <Linkedin className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-4 mt-2">
                 {[
                   "Start with a WhatsApp Sales Leak Audit",
                   "100+ copy-ready scripts for real sales conversations",
@@ -1200,8 +1237,8 @@ export default function App() {
           </p>
           <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-4 text-[10px] font-black text-zinc-400 uppercase tracking-[0.2em]">
             <a href="https://app.chatsalesrescue.com/access" className="hover:text-zinc-900 transition-colors">Member Login</a>
-            <a href="#" className="hover:text-zinc-900 transition-colors">Terms of Service</a>
-            <a href="#" className="hover:text-zinc-900 transition-colors">Privacy Policy</a>
+            <Link to="/terms-of-service" className="hover:text-zinc-900 transition-colors">Terms of Service</Link>
+            <Link to="/privacy-policy" className="hover:text-zinc-900 transition-colors">Privacy Policy</Link>
             <a href="#" className="hover:text-zinc-900 transition-colors">Support Center</a>
           </div>
         </div>
@@ -1223,6 +1260,7 @@ export default function App() {
       </div>
 
       <CheckoutModal isOpen={isCheckoutOpen} onClose={() => setIsCheckoutOpen(false)} />
+      <CookieConsent />
     </div>
   );
 }
