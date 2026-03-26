@@ -111,28 +111,26 @@ const FAQItem = ({ question, answer }: { question: string; answer: string; key?:
 };
 
 const CountdownTimer = () => {
-  const [timeLeft, setTimeLeft] = useState({ hours: 0, minutes: 0, seconds: 0 });
+  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
 
   useEffect(() => {
-    // Set a fixed expiration date (e.g., 48 hours from a fixed point, or just a specific date)
-    // Using a date slightly in the future based on current context
-    const targetDate = new Date('2026-03-21T23:59:59Z').getTime();
+    // 14 days in milliseconds
+    const cycleDuration = 14 * 24 * 60 * 60 * 1000;
+    // An arbitrary fixed epoch in the past to ensure consistent cycles for all users
+    const epoch = new Date('2024-01-01T00:00:00Z').getTime();
 
     const interval = setInterval(() => {
       const now = new Date().getTime();
-      const distance = targetDate - now;
+      const timeSinceEpoch = now - epoch;
+      const timeIntoCurrentCycle = timeSinceEpoch % cycleDuration;
+      const distance = cycleDuration - timeIntoCurrentCycle;
 
-      if (distance < 0) {
-        clearInterval(interval);
-        setTimeLeft({ hours: 0, minutes: 0, seconds: 0 });
-        return;
-      }
-
-      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)) + Math.floor(distance / (1000 * 60 * 60 * 24)) * 24;
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
       const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
       const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-      setTimeLeft({ hours, minutes, seconds });
+      setTimeLeft({ days, hours, minutes, seconds });
     }, 1000);
 
     return () => clearInterval(interval);
@@ -140,6 +138,8 @@ const CountdownTimer = () => {
 
   return (
     <div className="flex items-center gap-1.5 font-mono bg-white/20 px-2.5 py-1 rounded-md text-white text-xs tracking-wider">
+      <div className="flex flex-col items-center leading-none"><span className="font-bold text-sm">{String(timeLeft.days).padStart(2, '0')}</span><span className="text-[8px] uppercase opacity-70">days</span></div>
+      <span className="font-bold self-start mt-0.5">:</span>
       <div className="flex flex-col items-center leading-none"><span className="font-bold text-sm">{String(timeLeft.hours).padStart(2, '0')}</span><span className="text-[8px] uppercase opacity-70">hrs</span></div>
       <span className="font-bold self-start mt-0.5">:</span>
       <div className="flex flex-col items-center leading-none"><span className="font-bold text-sm">{String(timeLeft.minutes).padStart(2, '0')}</span><span className="text-[8px] uppercase opacity-70">min</span></div>
