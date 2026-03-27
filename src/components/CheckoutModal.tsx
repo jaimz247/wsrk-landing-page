@@ -1,21 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { X, Lock, ShieldCheck, Mail, User, ArrowRight, CheckCircle2, Loader2, CreditCard, AlertCircle, Tag } from 'lucide-react';
+import { X, Lock, ShieldCheck, Mail, User, ArrowRight, CheckCircle2, Loader2, CreditCard, AlertCircle, Tag, Globe, MessageSquare } from 'lucide-react';
 import { usePaystackPayment } from 'react-paystack';
 import { useFlutterwave, closePaymentModal } from 'flutterwave-react-v3';
 import { PayPalScriptProvider, PayPalButtons } from '@paypal/react-paypal-js';
+import { PricingTier, CountryCode } from '../config/pricing';
 
 interface CheckoutModalProps {
   isOpen: boolean;
   onClose: () => void;
+  pricing: PricingTier;
+  changeCountry: (code: CountryCode) => void;
+  allPricing: PricingTier[];
 }
 
-export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
+export default function CheckoutModal({ isOpen, onClose, pricing, changeCountry, allPricing }: CheckoutModalProps) {
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showCountrySelect, setShowCountrySelect] = useState(false);
+  const [selectedGateway, setSelectedGateway] = useState<'paystack' | 'flutterwave' | 'paypal'>(pricing.defaultGateway);
 
   // Coupon & Referral State
   const [couponCode, setCouponCode] = useState('');
@@ -23,10 +29,13 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
   const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
   const [couponMessage, setCouponMessage] = useState<{type: 'success' | 'error', text: string} | null>(null);
 
-  const basePrice = 7900;
+  const basePrice = pricing.amount;
   const finalPrice = Math.max(0, basePrice - discount);
-  const basePaypalPrice = 5.00; // Approximate USD equivalent
-  const finalPaypalPrice = Math.max(0, basePaypalPrice * (finalPrice / basePrice));
+  
+  const isPaypalSupportedCurrency = ['USD', 'GBP', 'EUR', 'AUD', 'CAD', 'BRL', 'MXN'].includes(pricing.currencyCode);
+  const paypalCurrency = isPaypalSupportedCurrency ? pricing.currencyCode : 'USD';
+  // If currency is not supported by PayPal, fallback to a $5 USD equivalent or proportional discount
+  const paypalAmount = isPaypalSupportedCurrency ? finalPrice : Math.max(0, 5.00 * (finalPrice / basePrice));
 
   // Reset state when modal opens
   useEffect(() => {
@@ -39,8 +48,13 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
       setCouponCode('');
       setDiscount(0);
       setCouponMessage(null);
+      setSelectedGateway(pricing.defaultGateway);
     }
-  }, [isOpen]);
+  }, [isOpen, pricing.defaultGateway]);
+
+  useEffect(() => {
+    setSelectedGateway(pricing.defaultGateway);
+  }, [pricing.defaultGateway]);
 
   // Mock backend for coupons and referrals
   const getCouponUsage = (code: string) => {
@@ -87,16 +101,11 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
         setCouponMessage({ type: 'success', text: '50% discount applied!' });
       }
     } else if (code === 'FREEPASS') {
-      if (usage >= 10) {
-        setDiscount(0);
-        setCouponMessage({ type: 'error', text: 'This coupon has reached its usage limit.' });
-      } else {
-        setDiscount(basePrice);
-        setCouponMessage({ type: 'success', text: '100% discount applied! Checkout is free.' });
-      }
+      setDiscount(basePrice);
+      setCouponMessage({ type: 'success', text: '100% discount applied! Checkout is free.' });
     } else if (code.startsWith('REF-') && code.length > 4) {
-      setDiscount(1000); // ₦1,000 off for referrals
-      setCouponMessage({ type: 'success', text: 'Referral discount applied (₦1,000 off)!' });
+      setDiscount(basePrice * 0.15); // 15% off for referrals
+      setCouponMessage({ type: 'success', text: 'Referral discount applied (15% off)!' });
     } else {
       setDiscount(0);
       setCouponMessage({ type: 'error', text: 'Invalid or expired coupon code.' });
@@ -127,14 +136,15 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
       console.log(`[Checkout] Free access granted. Sending manual webhook to portal...`);
       
       const payload = {
-        email: email
+        email: email,
+        secret: freeAccessSecret
       };
 
       const response = await fetch(freeAccessWebhookUrl, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
-          'x-free-access-secret': freeAccessSecret
+          'x-api-key': freeAccessSecret
         },
         body: JSON.stringify(payload)
       });
@@ -171,8 +181,8 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
   const paystackConfig = {
     reference: (new Date()).getTime().toString(),
     email: email,
-    amount: finalPrice * 100, // Paystack amount is in kobo/cents
-    currency: 'NGN',
+    amount: Math.round(finalPrice * 100), // Paystack amount is in kobo/cents
+    currency: pricing.currencyCode,
     publicKey: import.meta.env.VITE_PAYSTACK_PUBLIC_KEY || 'pk_test_placeholder',
   };
   const initializePaystack = usePaystackPayment(paystackConfig);
@@ -202,7 +212,7 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
     public_key: import.meta.env.VITE_FLUTTERWAVE_PUBLIC_KEY || 'FLWPUBK_TEST-placeholder',
     tx_ref: Date.now().toString(),
     amount: finalPrice,
-    currency: 'NGN',
+    currency: pricing.currencyCode,
     payment_options: 'card,mobilemoney,ussd',
     customer: {
       email: email,
@@ -394,18 +404,18 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                 <div className="bg-zinc-50 rounded-xl p-5 mb-6 border border-zinc-200">
                   <div className="flex justify-between items-center mb-3">
                     <span className="text-zinc-600 font-medium">WhatsApp Sales Rescue Kit</span>
-                    <span className="font-bold text-zinc-900">₦{basePrice.toLocaleString()}</span>
+                    <span className="font-bold text-zinc-900">{pricing.currencySymbol}{basePrice.toLocaleString()}</span>
                   </div>
                   {discount > 0 && (
                     <div className="flex justify-between items-center mb-3 text-[#25D366]">
                       <span className="font-medium">Discount Applied</span>
-                      <span className="font-bold">-₦{discount.toLocaleString()}</span>
+                      <span className="font-bold">-{pricing.currencySymbol}{discount.toLocaleString()}</span>
                     </div>
                   )}
                   <div className="h-px bg-zinc-200 w-full my-4"></div>
                   <div className="flex justify-between items-center">
                     <span className="text-lg font-bold text-zinc-900">Total</span>
-                    <span className="text-2xl font-black text-zinc-900">₦{finalPrice.toLocaleString()}</span>
+                    <span className="text-2xl font-black text-zinc-900">{pricing.currencySymbol}{finalPrice.toLocaleString()}</span>
                   </div>
                 </div>
 
@@ -489,6 +499,12 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                     Back to Details
                   </button>
                 </div>
+
+                {/* Trust Badges */}
+                <div className="mt-6 pt-6 border-t border-zinc-100 flex flex-wrap items-center justify-center gap-4 text-zinc-400 text-[10px] font-bold uppercase tracking-widest">
+                  <div className="flex items-center gap-1.5"><Lock className="w-3.5 h-3.5" /> SSL Secured</div>
+                  <div className="flex items-center gap-1.5"><ShieldCheck className="w-3.5 h-3.5" /> 14-Day Guarantee</div>
+                </div>
               </motion.div>
             )}
 
@@ -498,9 +514,51 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
               >
+                {/* Country Selector */}
+                <div className="mb-6 flex justify-center">
+                  <div className="relative">
+                    <button 
+                      onClick={() => setShowCountrySelect(!showCountrySelect)}
+                      className="flex items-center gap-2 text-sm font-bold text-zinc-700 hover:text-zinc-900 transition-colors bg-zinc-50 px-4 py-2 rounded-full border border-zinc-200"
+                    >
+                      <Globe className="w-4 h-4" />
+                      {pricing.country} ({pricing.currencyCode})
+                    </button>
+                    
+                    <AnimatePresence>
+                      {showCountrySelect && (
+                        <motion.div 
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -10 }}
+                          className="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-56 bg-white border border-zinc-200 rounded-xl shadow-xl overflow-hidden z-50"
+                        >
+                          <div className="max-h-60 overflow-y-auto py-2">
+                            {allPricing.map((p) => (
+                              <button
+                                key={p.code}
+                                onClick={() => {
+                                  changeCountry(p.code);
+                                  setShowCountrySelect(false);
+                                  setDiscount(0);
+                                  setCouponCode('');
+                                  setCouponMessage(null);
+                                }}
+                                className={`w-full text-left px-4 py-2 text-sm font-medium hover:bg-zinc-50 transition-colors ${p.code === pricing.code ? 'text-[#25D366] bg-green-50/50' : 'text-zinc-700'}`}
+                              >
+                                {p.country} ({p.currencySymbol})
+                              </button>
+                            ))}
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                </div>
+
                 <div className="mb-6 text-center">
                   <h4 className="text-2xl font-black text-zinc-900 mb-2">Select Payment Method</h4>
-                  <p className="text-zinc-500 font-medium">Choose how you'd like to pay ₦{finalPrice.toLocaleString()} securely.</p>
+                  <p className="text-zinc-500 font-medium">Choose how you'd like to pay {pricing.currencySymbol}{finalPrice.toLocaleString()} securely.</p>
                 </div>
 
                 <AnimatePresence>
@@ -528,72 +586,114 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                     </button>
                   ) : (
                     <>
-                      <button 
-                        onClick={handlePaystack}
-                        disabled={isProcessing}
-                        className="w-full p-4 border-2 border-zinc-200 rounded-xl flex items-center justify-between hover:border-[#0ba4db] hover:bg-[#0ba4db]/5 transition-all group disabled:opacity-50"
-                      >
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-white border border-zinc-100 rounded-lg flex items-center justify-center p-1.5 shadow-sm">
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/0/0b/Paystack_Logo.png" alt="Paystack" className="w-full h-full object-contain" />
-                          </div>
-                          <span className="font-bold text-zinc-900">Pay with Paystack</span>
-                        </div>
-                        <ArrowRight className="w-5 h-5 text-zinc-400 group-hover:text-[#0ba4db] transition-colors" />
-                      </button>
+                      <div className="space-y-3 mb-6">
+                        {pricing.gateways.includes('paystack') && (
+                          <label className={`flex items-center justify-between p-4 border-2 rounded-xl cursor-pointer transition-all ${selectedGateway === 'paystack' ? 'border-[#25D366] bg-green-50/30' : 'border-zinc-200 hover:border-zinc-300'}`}>
+                            <div className="flex items-center gap-3">
+                              <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${selectedGateway === 'paystack' ? 'border-[#25D366]' : 'border-zinc-300'}`}>
+                                {selectedGateway === 'paystack' && <div className="w-2.5 h-2.5 rounded-full bg-[#25D366]" />}
+                              </div>
+                              <div className="w-10 h-10 bg-white border border-zinc-100 rounded-lg flex items-center justify-center p-1.5 shadow-sm">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/0/0b/Paystack_Logo.png" alt="Paystack" className="w-full h-full object-contain" />
+                              </div>
+                              <div className="flex flex-col">
+                                <span className="font-bold text-zinc-900">Paystack</span>
+                                <span className="text-[10px] text-zinc-500 font-medium">Card, Bank Transfer, USSD</span>
+                              </div>
+                            </div>
+                          </label>
+                        )}
 
-                      <button 
-                        onClick={handleFlutterwave}
-                        disabled={isProcessing}
-                        className="w-full p-4 border-2 border-zinc-200 rounded-xl flex items-center justify-between hover:border-[#F5A623] hover:bg-[#F5A623]/5 transition-all group disabled:opacity-50"
-                      >
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-white border border-zinc-100 rounded-lg flex items-center justify-center p-1.5 shadow-sm">
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/8/8b/Flutterwave_Logo.png" alt="Flutterwave" className="w-full h-full object-contain" />
-                          </div>
-                          <span className="font-bold text-zinc-900">Pay with Flutterwave</span>
-                        </div>
-                        <ArrowRight className="w-5 h-5 text-zinc-400 group-hover:text-[#F5A623] transition-colors" />
-                      </button>
+                        {pricing.gateways.includes('flutterwave') && (
+                          <label className={`flex items-center justify-between p-4 border-2 rounded-xl cursor-pointer transition-all ${selectedGateway === 'flutterwave' ? 'border-[#25D366] bg-green-50/30' : 'border-zinc-200 hover:border-zinc-300'}`}>
+                            <div className="flex items-center gap-3">
+                              <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${selectedGateway === 'flutterwave' ? 'border-[#25D366]' : 'border-zinc-300'}`}>
+                                {selectedGateway === 'flutterwave' && <div className="w-2.5 h-2.5 rounded-full bg-[#25D366]" />}
+                              </div>
+                              <div className="w-10 h-10 bg-white border border-zinc-100 rounded-lg flex items-center justify-center p-1.5 shadow-sm">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/8/8b/Flutterwave_Logo.png" alt="Flutterwave" className="w-full h-full object-contain" />
+                              </div>
+                              <div className="flex flex-col">
+                                <span className="font-bold text-zinc-900">Flutterwave</span>
+                                <span className="text-[10px] text-zinc-500 font-medium">Mobile Money, Card, M-Pesa</span>
+                              </div>
+                            </div>
+                          </label>
+                        )}
 
-                      <div className="pt-4 border-t border-zinc-100 relative z-0">
-                        <PayPalScriptProvider options={{ clientId: import.meta.env.VITE_PAYPAL_CLIENT_ID || "test", currency: "USD" }}>
-                          <PayPalButtons 
-                            style={{ layout: "vertical", shape: "rect", color: "gold" }}
-                            onError={(err) => {
-                              setError("PayPal encountered an issue processing your request. This might be due to a temporary network issue or a restriction on your PayPal account. Please try another payment method.");
-                              setIsProcessing(false);
-                            }}
-                            onCancel={() => {
-                              setError("PayPal checkout was cancelled before completion. Please try again or select a different payment method.");
-                              setIsProcessing(false);
-                            }}
-                            createOrder={(data, actions) => {
-                              setError(null);
-                              return actions.order.create({
-                                intent: "CAPTURE",
-                                purchase_units: [
-                                  {
-                                    amount: {
-                                      currency_code: "USD",
-                                      value: finalPaypalPrice.toFixed(2),
-                                    },
-                                    description: "WhatsApp Sales Rescue Kit"
-                                  },
-                                ],
-                              });
-                            }}
-                            onApprove={async (data, actions) => {
-                              if (actions.order) {
-                                const details = await actions.order.capture();
-                                if (details.status === "COMPLETED") {
-                                  handleSuccess(details.id);
-                                }
-                              }
-                            }}
-                          />
-                        </PayPalScriptProvider>
+                        {pricing.gateways.includes('paypal') && (
+                          <label className={`flex items-center justify-between p-4 border-2 rounded-xl cursor-pointer transition-all ${selectedGateway === 'paypal' ? 'border-[#25D366] bg-green-50/30' : 'border-zinc-200 hover:border-zinc-300'}`}>
+                            <div className="flex items-center gap-3">
+                              <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${selectedGateway === 'paypal' ? 'border-[#25D366]' : 'border-zinc-300'}`}>
+                                {selectedGateway === 'paypal' && <div className="w-2.5 h-2.5 rounded-full bg-[#25D366]" />}
+                              </div>
+                              <div className="w-10 h-10 bg-white border border-zinc-100 rounded-lg flex items-center justify-center p-1.5 shadow-sm">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal" className="w-full h-full object-contain" />
+                              </div>
+                              <div className="flex flex-col">
+                                <span className="font-bold text-zinc-900">PayPal</span>
+                                <span className="text-[10px] text-zinc-500 font-medium">PayPal Balance, Credit Card</span>
+                              </div>
+                            </div>
+                          </label>
+                        )}
                       </div>
+
+                      {selectedGateway === 'paypal' ? (
+                        <div className="pt-2 relative z-0">
+                          <PayPalScriptProvider options={{ clientId: import.meta.env.VITE_PAYPAL_CLIENT_ID || "test", currency: paypalCurrency }}>
+                            <PayPalButtons 
+                              style={{ layout: "vertical", shape: "rect", color: "gold" }}
+                              onError={(err) => {
+                                setError("PayPal encountered an issue processing your request. This might be due to a temporary network issue or a restriction on your PayPal account. Please try another payment method.");
+                                setIsProcessing(false);
+                              }}
+                              onCancel={() => {
+                                setError("PayPal checkout was cancelled before completion. Please try again or select a different payment method.");
+                                setIsProcessing(false);
+                              }}
+                              createOrder={(data, actions) => {
+                                setError(null);
+                                return actions.order.create({
+                                  intent: "CAPTURE",
+                                  purchase_units: [
+                                    {
+                                      amount: {
+                                        currency_code: paypalCurrency,
+                                        value: paypalAmount.toFixed(2),
+                                      },
+                                      description: "WhatsApp Sales Rescue Kit"
+                                    },
+                                  ],
+                                });
+                              }}
+                              onApprove={async (data, actions) => {
+                                if (actions.order) {
+                                  const details = await actions.order.capture();
+                                  if (details.status === "COMPLETED") {
+                                    handleSuccess(details.id);
+                                  }
+                                }
+                              }}
+                            />
+                          </PayPalScriptProvider>
+                        </div>
+                      ) : (
+                        <button 
+                          onClick={selectedGateway === 'paystack' ? handlePaystack : handleFlutterwave}
+                          disabled={isProcessing}
+                          className="w-full py-4 bg-[#25D366] text-white rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-[#20bd5a] transition-colors disabled:opacity-50"
+                        >
+                          {isProcessing ? (
+                            <Loader2 className="w-5 h-5 animate-spin" />
+                          ) : (
+                            <>
+                              Pay with {selectedGateway === 'paystack' ? 'Paystack' : 'Flutterwave'}
+                              <ArrowRight className="w-5 h-5" />
+                            </>
+                          )}
+                        </button>
+                      )}
                     </>
                   )}
 
@@ -604,6 +704,13 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                   >
                     Back to Order Summary
                   </button>
+                </div>
+
+                {/* Trust Badges */}
+                <div className="mt-6 pt-6 border-t border-zinc-100 flex flex-wrap items-center justify-center gap-4 text-zinc-400 text-[10px] font-bold uppercase tracking-widest">
+                  <div className="flex items-center gap-1.5"><Lock className="w-3.5 h-3.5" /> SSL Secured</div>
+                  <div className="flex items-center gap-1.5"><ShieldCheck className="w-3.5 h-3.5" /> 14-Day Guarantee</div>
+                  <div className="flex items-center gap-1.5"><CreditCard className="w-3.5 h-3.5" /> Safe Payment</div>
                 </div>
               </motion.div>
             )}
@@ -630,6 +737,22 @@ export default function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
               </motion.div>
             )}
           </div>
+
+          {/* Help Area */}
+          {step !== 4 && (
+            <div className="bg-zinc-50 p-6 border-t border-zinc-100 text-center">
+              <p className="text-xs text-zinc-500 font-medium mb-3">Need help with your payment?</p>
+              <a 
+                href="https://wa.me/2348000000000" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-sm font-bold text-[#25D366] hover:text-[#128C7E] transition-colors"
+              >
+                <MessageSquare className="w-4 h-4" />
+                Chat with Support on WhatsApp
+              </a>
+            </div>
+          )}
         </motion.div>
       </div>
     </AnimatePresence>

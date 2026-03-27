@@ -31,13 +31,15 @@ import {
   Facebook,
   Twitter,
   Linkedin,
-  Share2
+  Share2,
+  CreditCard
 } from 'lucide-react';
 import { motion, AnimatePresence, useInView, animate } from 'motion/react';
 import CheckoutModal from './components/CheckoutModal';
 
 import { Link } from 'react-router-dom';
 import CookieConsent from './components/CookieConsent';
+import { useGeolocationPricing } from './hooks/useGeolocationPricing';
 
 // --- Components ---
 
@@ -187,6 +189,7 @@ const AnimatedCounter = ({ value, suffix = "", prefix = "" }: { value: number, s
 export default function App() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+  const { pricing, changeCountry, allPricing } = useGeolocationPricing();
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
@@ -204,7 +207,7 @@ export default function App() {
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
             <span className="relative inline-flex rounded-full h-2 w-2 bg-[#25D366]"></span>
           </span>
-          <span>Get lifetime access for ₦7,900 before the price increases to ₦15,000.</span>
+          <span>Get lifetime access for {pricing.currencySymbol}{pricing.amount.toLocaleString()} before the price increases to {pricing.currencySymbol}{pricing.originalAmount.toLocaleString()}.</span>
         </div>
         <CountdownTimer />
       </div>
@@ -1012,15 +1015,15 @@ export default function App() {
                   <div className="bg-zinc-50 p-10 rounded-3xl border border-zinc-100 relative overflow-hidden">
                     <div className="absolute top-0 left-0 right-0 bg-red-50 border-b border-red-100 text-red-600 py-2 text-center text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-1.5">
                       <Clock className="w-3.5 h-3.5" />
-                      Price increases to ₦15,000 soon
+                      Price increases to {pricing.currencySymbol}{pricing.originalAmount.toLocaleString()} soon
                     </div>
                     <div className="mb-6 mt-4">
-                      <p className="text-zinc-400 font-bold uppercase tracking-widest text-[10px] mb-1">Total Value: ₦97,000</p>
+                      <p className="text-zinc-400 font-bold uppercase tracking-widest text-[10px] mb-1">Total Value: {pricing.currencySymbol}{(pricing.amount * 12.2).toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
                       <p className="text-zinc-900 font-bold uppercase tracking-widest text-xs">One-Time Payment</p>
                     </div>
                     <div className="flex items-baseline justify-center md:justify-start gap-3 mb-8">
-                      <span className="text-6xl font-black text-zinc-900">₦7,900</span>
-                      <span className="text-2xl font-bold text-zinc-400 line-through decoration-red-500/50">₦97,000</span>
+                      <span className="text-6xl font-black text-zinc-900">{pricing.currencySymbol}{pricing.amount.toLocaleString()}</span>
+                      <span className="text-2xl font-bold text-zinc-400 line-through decoration-red-500/50">{pricing.currencySymbol}{pricing.originalAmount.toLocaleString()}</span>
                     </div>
                     <Button onClick={() => setIsCheckoutOpen(true)} className="w-full text-xl py-6 mb-4">
                       Get Instant Access
@@ -1032,11 +1035,12 @@ export default function App() {
                       Limited spots available at this price. Secure yours now!
                     </p>
                     <div className="flex flex-col items-center gap-3">
-                      <div className="flex items-center justify-center md:justify-start gap-2 text-zinc-400 text-xs font-bold uppercase tracking-widest">
-                        <Lock className="w-3.5 h-3.5" />
-                        Secure Checkout
+                      <div className="flex flex-wrap items-center justify-center gap-4 text-zinc-400 text-[10px] font-bold uppercase tracking-widest">
+                        <div className="flex items-center gap-1.5"><Lock className="w-3.5 h-3.5" /> SSL Secured</div>
+                        <div className="flex items-center gap-1.5"><ShieldCheck className="w-3.5 h-3.5" /> 14-Day Guarantee</div>
+                        <div className="flex items-center gap-1.5"><CreditCard className="w-3.5 h-3.5" /> Safe Payment</div>
                       </div>
-                      <p className="text-[10px] text-zinc-400 text-center max-w-[200px] leading-relaxed">
+                      <p className="text-[10px] text-zinc-400 text-center max-w-[200px] leading-relaxed mt-2">
                         *Optional upgrades available inside: AI-personalized scripts, setup sprints, and storefront add-ons.
                       </p>
                     </div>
@@ -1248,7 +1252,7 @@ export default function App() {
       <div className="fixed bottom-0 left-0 right-0 p-4 z-40 sm:hidden">
         <div className="bg-white/80 backdrop-blur-xl p-3 rounded-2xl border border-zinc-100 shadow-2xl flex flex-col items-center">
           <Button onClick={() => setIsCheckoutOpen(true)} className="w-full py-4 shadow-none">
-            Get Instant Access — ₦7,900
+            Get Instant Access — {pricing.currencySymbol}{pricing.amount.toLocaleString()}
           </Button>
           <p className="text-zinc-500 text-[10px] font-bold text-center mt-2">
             Instant access delivered securely to your email.
@@ -1259,7 +1263,13 @@ export default function App() {
         </div>
       </div>
 
-      <CheckoutModal isOpen={isCheckoutOpen} onClose={() => setIsCheckoutOpen(false)} />
+      <CheckoutModal 
+        isOpen={isCheckoutOpen} 
+        onClose={() => setIsCheckoutOpen(false)} 
+        pricing={pricing}
+        changeCountry={changeCountry}
+        allPricing={allPricing}
+      />
       <CookieConsent />
     </div>
   );
