@@ -130,7 +130,7 @@ export default function CheckoutModal({ isOpen, onClose, pricing, changeCountry,
     // However, if the user used a 100% FREEPASS, the payment gateways are bypassed.
     // We MUST send a manual webhook to the portal to grant them access.
     try {
-      const freeAccessWebhookUrl = import.meta.env.VITE_PORTAL_FREE_WEBHOOK_URL || 'https://app.chatsalesrescue.com/api/webhooks/free-access';
+      const freeAccessWebhookUrl = import.meta.env.VITE_PORTAL_FREE_WEBHOOK_URL || 'https://app.chatsalesrescue.com/api/access/grant-free';
       const freeAccessSecret = import.meta.env.VITE_FREE_ACCESS_SECRET || 'FREEPASS';
       
       console.log(`[Checkout] Free access granted. Sending manual webhook to portal...`);
