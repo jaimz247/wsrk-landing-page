@@ -119,12 +119,12 @@ export default function CheckoutModal({ isOpen, onClose, pricing, changeCountry,
     setCouponMessage(null);
   };
 
-  const sendReceipt = async (transactionRef: string) => {
+  const sendReceipt = async (transactionRef: string): Promise<boolean> => {
     // If the user paid money, the payment gateways (Paystack, Flutterwave, PayPal) 
     // will automatically send a secure webhook to the portal. We don't need to do anything here.
     if (finalPrice > 0) {
       console.log(`[Checkout] Paid transaction completed. Payment gateway will send webhook to portal.`);
-      return;
+      return true;
     }
 
     // However, if the user used a 100% FREEPASS, the payment gateways are bypassed.
@@ -151,17 +151,32 @@ export default function CheckoutModal({ isOpen, onClose, pricing, changeCountry,
 
       if (!response.ok) {
         console.error("Failed to whitelist free user on the portal. Status:", response.status);
+        return false;
       } else {
         console.log("Successfully whitelisted free user on the portal.");
+        return true;
       }
     } catch (e) {
       console.error("Network error while communicating with portal for free access", e);
+      return false;
     }
   };
 
-  const handleSuccess = (transactionRef: string) => {
+  const handleSuccess = async (transactionRef: string) => {
+    setIsProcessing(true);
+    setError(null);
+
+    // Wait for the webhook to succeed before proceeding
+    const isSuccess = await sendReceipt(transactionRef);
+
+    if (!isSuccess && finalPrice === 0) {
+      setError("Failed to verify free access with the portal. This is likely a server or CORS issue on the portal side. Please contact support.");
+      setIsProcessing(false);
+      return; // Stop here, don't redirect
+    }
+
     setStep(4);
-    sendReceipt(transactionRef);
+    setIsProcessing(false);
     
     if (couponCode.trim()) {
       const code = couponCode.trim().toUpperCase();
