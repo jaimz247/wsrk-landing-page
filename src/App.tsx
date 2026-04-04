@@ -216,12 +216,12 @@ export default function App() {
       <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${isScrolled ? 'bg-white/80 backdrop-blur-xl border-b border-zinc-100 py-3 translate-y-0' : 'bg-transparent py-8 translate-y-10 sm:translate-y-10'}`}>
         <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 bg-[#25D366] rounded-xl flex items-center justify-center shadow-lg shadow-green-500/20">
+            <div className="w-9 h-9 bg-[#25D366] rounded-xl flex items-center justify-center shadow-lg shadow-green-500/20 shrink-0">
               <ShieldCheck className="w-5 h-5 text-white" />
             </div>
             <div className="flex flex-col leading-none">
-              <span className="font-black text-lg tracking-tight">WSRK</span>
-              <span className="text-[9px] font-bold text-zinc-400 uppercase tracking-widest">Profit-Lock™</span>
+              <span className="font-black text-sm sm:text-lg tracking-tight">WhatsApp Sales Rescue Kit</span>
+              <span className="text-[9px] font-bold text-zinc-400 uppercase tracking-widest mt-0.5">Profit-Lock™</span>
             </div>
           </div>
           <div className="flex items-center gap-6">
@@ -1230,10 +1230,10 @@ export default function App() {
       <footer className="bg-white py-20 border-t border-zinc-100">
         <div className="max-w-7xl mx-auto px-6 text-center">
           <div className="flex items-center justify-center gap-3 mb-8">
-            <div className="w-8 h-8 bg-[#25D366] rounded-lg flex items-center justify-center">
+            <div className="w-8 h-8 bg-[#25D366] rounded-lg flex items-center justify-center shrink-0">
               <ShieldCheck className="w-5 h-5 text-white" />
             </div>
-            <span className="font-black text-xl tracking-tight">WSRK</span>
+            <span className="font-black text-lg sm:text-xl tracking-tight">WhatsApp Sales Rescue Kit</span>
           </div>
           <p className="text-zinc-400 font-bold text-sm mb-10 max-w-md mx-auto leading-relaxed">
             © 2026 Profit-Lock™ Method. All rights reserved. <br />
