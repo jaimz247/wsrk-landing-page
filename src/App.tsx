@@ -1243,7 +1243,7 @@ export default function App() {
             <a href="https://app.chatsalesrescue.com/access" className="hover:text-zinc-900 transition-colors">Member Login</a>
             <Link to="/terms-of-service" className="hover:text-zinc-900 transition-colors">Terms of Service</Link>
             <Link to="/privacy-policy" className="hover:text-zinc-900 transition-colors">Privacy Policy</Link>
-            <a href="#" className="hover:text-zinc-900 transition-colors">Support Center</a>
+            <Link to="/support-center" className="hover:text-zinc-900 transition-colors">Support Center</Link>
           </div>
         </div>
       </footer>
