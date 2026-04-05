@@ -191,6 +191,23 @@ export default function App() {
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const { pricing, changeCountry, allPricing } = useGeolocationPricing();
 
+  const handleCheckoutClick = () => {
+    // Track InitiateCheckout before redirecting
+    if (typeof window !== 'undefined' && (window as any).fbq) {
+      (window as any).fbq('track', 'InitiateCheckout', {
+        currency: pricing.currency,
+        value: pricing.amount
+      });
+    }
+
+    // TEMPORARY: Redirect to Selar for initial Nigeria-only launch
+    window.location.href = "https://selar.com/44447077s5";
+    
+    // To revert back to the direct checkout modal later, comment out the line above
+    // and uncomment the line below:
+    // setIsCheckoutOpen(true);
+  };
+
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
     window.addEventListener('scroll', handleScroll);
@@ -228,7 +245,7 @@ export default function App() {
             <a href="#features" className="text-sm font-bold text-zinc-500 hover:text-zinc-900 transition-colors hidden sm:block">What's Inside</a>
             <a href="#pricing" className="text-sm font-bold text-zinc-500 hover:text-zinc-900 transition-colors hidden sm:block">Pricing</a>
             <a href="https://app.chatsalesrescue.com/access" className="text-sm font-bold text-zinc-500 hover:text-zinc-900 transition-colors hidden sm:block">Member Login</a>
-            <Button onClick={() => setIsCheckoutOpen(true)} variant="secondary" className="px-5 py-2.5 text-sm md:px-7 md:py-3.5 md:text-base">
+            <Button onClick={handleCheckoutClick} variant="secondary" className="px-5 py-2.5 text-sm md:px-7 md:py-3.5 md:text-base">
               Get Access
             </Button>
           </div>
@@ -259,7 +276,7 @@ export default function App() {
             <div className="flex flex-col items-center gap-8">
               <div className="flex flex-col items-center w-full max-w-xl">
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full">
-                  <Button onClick={() => setIsCheckoutOpen(true)} className="w-full sm:flex-1 group text-lg">
+                  <Button onClick={handleCheckoutClick} className="w-full sm:flex-1 group text-lg">
                     Get Instant Access
                     <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
                   </Button>
@@ -1025,7 +1042,7 @@ export default function App() {
                       <span className="text-6xl font-black text-zinc-900">{pricing.currencySymbol}{pricing.amount.toLocaleString()}</span>
                       <span className="text-2xl font-bold text-zinc-400 line-through decoration-red-500/50">{pricing.currencySymbol}{pricing.originalAmount.toLocaleString()}</span>
                     </div>
-                    <Button onClick={() => setIsCheckoutOpen(true)} className="w-full text-xl py-6 mb-4">
+                    <Button onClick={handleCheckoutClick} className="w-full text-xl py-6 mb-4">
                       Get Instant Access
                     </Button>
                     <p className="text-zinc-500 text-xs font-bold text-center mb-2">
@@ -1213,7 +1230,7 @@ export default function App() {
             You do not always need more leads first. Sometimes, you simply need a better system for how you handle the conversations you are already getting.
           </p>
           <div className="flex flex-col items-center gap-6">
-            <Button onClick={() => setIsCheckoutOpen(true)} className="w-full sm:w-auto px-16 py-6 text-2xl">
+            <Button onClick={handleCheckoutClick} className="w-full sm:w-auto px-16 py-6 text-2xl">
               Get Instant Access
             </Button>
             <p className="text-zinc-500 font-bold text-sm -mt-2">
@@ -1251,7 +1268,7 @@ export default function App() {
       {/* Sticky Mobile CTA */}
       <div className="fixed bottom-0 left-0 right-0 p-4 z-40 sm:hidden">
         <div className="bg-white/80 backdrop-blur-xl p-3 rounded-2xl border border-zinc-100 shadow-2xl flex flex-col items-center">
-          <Button onClick={() => setIsCheckoutOpen(true)} className="w-full py-4 shadow-none">
+          <Button onClick={handleCheckoutClick} className="w-full py-4 shadow-none">
             Get Instant Access — {pricing.currencySymbol}{pricing.amount.toLocaleString()}
           </Button>
           <p className="text-zinc-500 text-[10px] font-bold text-center mt-2">

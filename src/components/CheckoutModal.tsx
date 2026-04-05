@@ -49,6 +49,11 @@ export default function CheckoutModal({ isOpen, onClose, pricing, changeCountry,
       setDiscount(0);
       setCouponMessage(null);
       setSelectedGateway(pricing.defaultGateway);
+      
+      // Track InitiateCheckout
+      if (typeof window !== 'undefined' && (window as any).fbq) {
+        (window as any).fbq('track', 'InitiateCheckout');
+      }
     }
   }, [isOpen, pricing.defaultGateway]);
 
@@ -177,6 +182,14 @@ export default function CheckoutModal({ isOpen, onClose, pricing, changeCountry,
 
     setStep(4);
     setIsProcessing(false);
+    
+    // Track Purchase
+    if (typeof window !== 'undefined' && (window as any).fbq) {
+      (window as any).fbq('track', 'Purchase', {
+        value: finalPrice,
+        currency: pricing.currencyCode
+      });
+    }
     
     if (couponCode.trim()) {
       const code = couponCode.trim().toUpperCase();

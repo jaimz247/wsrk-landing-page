@@ -2,10 +2,13 @@ import { useState, useEffect } from 'react';
 import { PRICING_CONFIG, CountryCode, PricingTier, getPricingForCountry } from '../config/pricing';
 
 export const useGeolocationPricing = () => {
-  const [pricing, setPricing] = useState<PricingTier>(PRICING_CONFIG.INTL);
-  const [isLoading, setIsLoading] = useState(true);
+  // TEMPORARY: Hardcoded to Nigeria (NGN) for initial launch
+  const [pricing, setPricing] = useState<PricingTier>(PRICING_CONFIG.NG);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    // TEMPORARY: Geolocation disabled for initial Nigeria-only launch
+    /*
     const fetchLocation = async () => {
       try {
         const storedCountry = localStorage.getItem('selected_country');
@@ -34,12 +37,16 @@ export const useGeolocationPricing = () => {
     };
 
     fetchLocation();
+    */
   }, []);
 
   const changeCountry = (countryCode: CountryCode) => {
+    // TEMPORARY: Disabled for initial Nigeria-only launch
+    /*
     const newPricing = getPricingForCountry(countryCode);
     setPricing(newPricing);
     localStorage.setItem('selected_country', newPricing.code);
+    */
   };
 
   return { 
