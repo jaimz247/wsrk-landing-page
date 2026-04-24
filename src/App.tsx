@@ -32,7 +32,8 @@ import {
   Twitter,
   Linkedin,
   Share2,
-  CreditCard
+  CreditCard,
+  ArrowUp
 } from 'lucide-react';
 import { motion, AnimatePresence, useInView, animate } from 'motion/react';
 import CheckoutModal from './components/CheckoutModal';
@@ -188,6 +189,7 @@ const AnimatedCounter = ({ value, suffix = "", prefix = "" }: { value: number, s
 
 export default function App() {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [showScrollTop, setShowScrollTop] = useState(false);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const { pricing, changeCountry, allPricing } = useGeolocationPricing();
 
@@ -208,8 +210,15 @@ export default function App() {
     // setIsCheckoutOpen(true);
   };
 
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 50);
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+      setShowScrollTop(window.scrollY > 200);
+    };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
@@ -217,6 +226,22 @@ export default function App() {
   return (
     <div className="min-h-screen bg-white text-zinc-900 font-sans selection:bg-green-100 selection:text-green-900 antialiased">
       
+      {/* Scroll to Top Button */}
+      <AnimatePresence>
+        {showScrollTop && (
+          <motion.button
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            onClick={scrollToTop}
+            className="fixed bottom-24 sm:bottom-8 right-6 z-[70] w-12 h-12 bg-zinc-900 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-zinc-800 transition-colors"
+            aria-label="Scroll to top"
+          >
+            <ArrowUp className="w-5 h-5" />
+          </motion.button>
+        )}
+      </AnimatePresence>
+
       {/* Top Urgency Banner */}
       <div className="bg-zinc-900 text-white text-center py-2.5 px-4 text-xs sm:text-sm font-bold flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 relative z-[60]">
         <div className="flex items-center gap-2">
@@ -253,7 +278,7 @@ export default function App() {
       </nav>
 
       {/* Hero Section */}
-      <Section className="pt-32 pb-20 md:pt-52 md:pb-40 relative overflow-hidden">
+      <Section className="pt-32 pb-20 md:pt-40 md:pb-32 relative overflow-hidden">
         {/* Background Accents */}
         <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-[800px] h-[800px] bg-green-50 rounded-full blur-[120px] opacity-40 -z-10" />
         <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/4 w-[600px] h-[600px] bg-blue-50 rounded-full blur-[100px] opacity-30 -z-10" />
@@ -265,28 +290,52 @@ export default function App() {
             transition={{ duration: 0.6, ease: "easeOut" }}
           >
             <Badge>Powered by the Profit-Lock™ Method</Badge>
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tight text-zinc-900 mb-8 leading-[0.95]">
-              Stop Losing Buyers <br />
-              <span className="text-[#128C7E]">on WhatsApp</span>
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-black tracking-tight text-zinc-900 mb-6 leading-tight">
+              Stop Losing Serious Buyers on WhatsApp —<br />
+              <span className="text-[#128C7E]">Turn Enquiries Into Payments With Proven Reply Scripts</span>
             </h1>
-            <p className="text-xl md:text-2xl text-zinc-600 max-w-3xl mx-auto mb-12 leading-relaxed font-medium">
-              Get the private access portal with a WhatsApp Sales Leak Audit, copy-ready scripts, guided setup, and practical tools to help you protect your prices, follow up better, and turn more WhatsApp chats into sales.
+            <p className="text-lg md:text-xl text-zinc-600 max-w-2xl mx-auto mb-10 leading-relaxed font-medium">
+              Built for Nigerian vendors and business owners who get messages but struggle to close sales.
             </p>
+
+            <div className="flex flex-col items-start text-left max-w-sm mx-auto mb-10 space-y-4">
+              <div className="flex items-start gap-3">
+                <div className="w-6 h-6 rounded-full bg-red-100 flex items-center justify-center shrink-0 mt-0.5">
+                  <X className="w-3.5 h-3.5 text-red-600" />
+                </div>
+                <p className="text-zinc-700 font-bold leading-tight">People ask "How much?" then disappear</p>
+              </div>
+              <div className="flex items-start gap-3">
+                <div className="w-6 h-6 rounded-full bg-red-100 flex items-center justify-center shrink-0 mt-0.5">
+                  <X className="w-3.5 h-3.5 text-red-600" />
+                </div>
+                <p className="text-zinc-700 font-bold leading-tight">Customers say "I'll get back to you" and ghost</p>
+              </div>
+              <div className="flex items-start gap-3">
+                <div className="w-6 h-6 rounded-full bg-red-100 flex items-center justify-center shrink-0 mt-0.5">
+                  <X className="w-3.5 h-3.5 text-red-600" />
+                </div>
+                <p className="text-zinc-700 font-bold leading-tight">You explain everything but they don't pay</p>
+              </div>
+            </div>
             
-            <div className="flex flex-col items-center gap-8">
+            <div className="flex flex-col items-center gap-6">
               <div className="flex flex-col items-center w-full max-w-xl">
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full">
-                  <Button onClick={handleCheckoutClick} className="w-full sm:flex-1 group text-lg">
-                    Get Instant Access
+                  <Button onClick={handleCheckoutClick} className="w-full sm:flex-1 group text-lg py-5">
+                    Get Instant Access Now — {pricing.currencySymbol}{pricing.amount.toLocaleString()}
                     <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
                   </Button>
-                  <Button variant="outline" className="w-full sm:w-auto px-10">
-                    See What’s Inside
-                  </Button>
                 </div>
-                <p className="text-zinc-500 text-xs font-bold text-center mt-3">
-                  Instant access delivered securely to your email.
-                </p>
+                
+                {/* Checkout Reassurance Block */}
+                <div className="flex flex-col sm:flex-row items-center gap-4 mt-6 text-zinc-500 text-xs font-bold bg-zinc-50 px-6 py-3 rounded-2xl border border-zinc-100 justify-center flex-wrap">
+                  <div className="flex items-center gap-1.5"><Lock className="w-3.5 h-3.5 text-[#25D366]" /> Secure checkout via Selar</div>
+                  <div className="hidden sm:block text-zinc-300">•</div>
+                  <div className="flex items-center gap-1.5"><Zap className="w-3.5 h-3.5 text-yellow-500" /> Instant access after payment</div>
+                  <div className="hidden sm:block text-zinc-300">•</div>
+                  <div className="flex items-center gap-1.5"><Smartphone className="w-3.5 h-3.5 text-blue-500" /> Works on mobile</div>
+                </div>
               </div>
 
               {/* Social Sharing */}
@@ -365,379 +414,231 @@ export default function App() {
         </div>
       </Section>
 
-      {/* Problem Section */}
-      <Section className="bg-zinc-50 relative">
-        <div className="grid lg:grid-cols-12 gap-16 items-start">
-          <div className="lg:col-span-7">
-            <Badge>The Problem</Badge>
-            <h2 className="text-4xl md:text-5xl font-black mb-8 leading-tight tracking-tight">
-              People Are Messaging You — <br />
-              <span className="text-red-500">But Too Many Never Pay</span>
-            </h2>
-            <div className="space-y-6 text-lg text-zinc-600 leading-relaxed">
-              <p>If you sell on WhatsApp, you already know how frustrating this can be.</p>
-              <div className="space-y-1 font-bold text-zinc-900">
-                <p>People message you. They ask questions.</p>
-                <p>They ask for the price. You respond.</p>
-                <p className="text-red-500">Then silence.</p>
-              </div>
-              <p>
-                Sometimes they seem serious. Sometimes they say they’ll get back to you. Sometimes they even ask for payment details. Then they disappear.
-              </p>
-              <p>
-                And after a while, it starts to feel like you need more leads, more ads, more followers, more views, or more traffic.
-              </p>
-              <div className="p-6 bg-white rounded-2xl border border-zinc-200 shadow-sm">
-                <p className="font-bold text-zinc-900 mb-2">But often, that is not the real problem.</p>
-                <p>The real problem is that too many of your current WhatsApp conversations are not converting into paid orders.</p>
-              </div>
-            </div>
-          </div>
-          <div className="lg:col-span-5 sticky top-32">
-            <div className="bg-white p-8 rounded-[32px] shadow-2xl shadow-zinc-200 border border-zinc-100">
-              <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
-                <AlertCircle className="w-5 h-5 text-red-500" />
-                This means:
-              </h3>
-              <ul className="space-y-5">
-                {[
-                  "Hot leads are cooling off",
-                  "Price inquiries are dying too early",
-                  "Follow-up is inconsistent",
-                  "Chats are messy",
-                  "Serious buyers are slipping away"
-                ].map((item, i) => (
-                  <li key={i} className="flex items-center gap-4 group">
-                    <div className="w-2 h-2 rounded-full bg-red-500 group-hover:scale-150 transition-transform" />
-                    <span className="text-zinc-800 font-bold">{item}</span>
-                  </li>
-                ))}
-              </ul>
-              <div className="mt-10 pt-8 border-t border-zinc-100">
-                <p className="text-zinc-500 font-medium italic text-center">
-                  "You do not always have a lead problem. Sometimes, you have a WhatsApp sales process problem."
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </Section>
-
-      {/* Find the Leaks Section */}
-      <Section className="bg-white border-t border-zinc-100">
-        <div className="max-w-4xl mx-auto text-center">
-          <Badge>The Diagnostic Approach</Badge>
-          <h2 className="text-4xl md:text-5xl font-black mb-8 leading-tight">
-            Start by Finding the Leaks <br />
-            <span className="text-[#128C7E]">in Your WhatsApp Sales Process</span>
-          </h2>
-          <p className="text-xl text-zinc-600 mb-12 leading-relaxed font-medium">
-            Many sellers are losing money in hidden points of the conversation. The included Sales Leak Audit helps reveal exactly where your chats are breaking down, so the portal can help you fix those exact leaks.
-          </p>
-          <div className="grid md:grid-cols-3 gap-8 text-left">
-            <div className="p-8 bg-zinc-50 rounded-3xl border border-zinc-100">
-              <div className="w-12 h-12 bg-red-50 rounded-xl flex items-center justify-center mb-6">
-                <AlertCircle className="w-6 h-6 text-red-500" />
-              </div>
-              <h3 className="text-xl font-bold mb-3">Hidden Leaks</h3>
-              <p className="text-zinc-500 font-medium">Discover where buyers are silently dropping off before they ever see your price.</p>
-            </div>
-            <div className="p-8 bg-zinc-50 rounded-3xl border border-zinc-100">
-              <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center mb-6">
-                <BarChart3 className="w-6 h-6 text-blue-500" />
-              </div>
-              <h3 className="text-xl font-bold mb-3">The Audit</h3>
-              <p className="text-zinc-500 font-medium">Take the diagnostic assessment to pinpoint your specific follow-up and closing weaknesses.</p>
-            </div>
-            <div className="p-8 bg-zinc-50 rounded-3xl border border-zinc-100">
-              <div className="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center mb-6">
-                <Check className="w-6 h-6 text-[#25D366]" />
-              </div>
-              <h3 className="text-xl font-bold mb-3">The Fix</h3>
-              <p className="text-zinc-500 font-medium">Use the portal's targeted scripts and tools to plug the leaks and recover lost revenue.</p>
-            </div>
-          </div>
-        </div>
-      </Section>
-
-      {/* Pain Expansion */}
-      <Section>
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-16">
-            <Badge>Relatability</Badge>
-            <h2 className="text-4xl font-black mb-6">If This Sounds Familiar, <br />This Was Built for You</h2>
-          </div>
-          <div className="grid md:grid-cols-2 gap-x-12 gap-y-6">
-            {[
-              "People ask for price and disappear",
-              "You are not always sure what to say next",
-              "You follow up too late — or not at all",
-              "Your replies are inconsistent depending on the day",
-              "Buyers push your price down too easily",
-              "Your chats are not well organized",
-              "Serious leads get buried in too many conversations",
-              "You have interest, but not enough actual payment",
-              "You know you could be closing more sales if your process was tighter"
-            ].map((item, i) => (
-              <div key={i} className="flex items-start gap-4 p-4 rounded-xl hover:bg-zinc-50 transition-colors">
-                <div className="w-6 h-6 rounded-full bg-red-50 flex items-center justify-center shrink-0 mt-0.5">
-                  <X className="w-3.5 h-3.5 text-red-500" />
-                </div>
-                <span className="text-zinc-700 font-bold leading-tight">{item}</span>
-              </div>
-            ))}
-          </div>
-          <div className="mt-16 text-center">
-            <p className="text-xl font-bold text-zinc-900 mb-8">
-              If any of these sound familiar, you do not need more random hustle first. <br />
-              <span className="text-[#128C7E]">You need a better system for how you sell inside WhatsApp.</span>
-            </p>
-          </div>
-        </div>
-      </Section>
-
-      {/* Root Cause */}
-      <Section className="bg-zinc-900 text-white rounded-[40px] mx-6 my-12">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
-          <div>
-            <Badge className="bg-white/10 text-white border-white/20">The Root Cause</Badge>
-            <h2 className="text-4xl md:text-5xl font-black mb-6 leading-tight">
-              Why Most Sellers Keep <br />
-              Losing Sales on WhatsApp
-            </h2>
-            <p className="text-xl text-zinc-400 mb-8 font-medium">
-              Usually, it is not because the product is bad. <br />
-              It is because the sales process inside the chat is weak.
-            </p>
-            <div className="space-y-6 text-zinc-300">
-              <p>Most WhatsApp sales do not fail because the buyer never had interest. They fail because something in the conversation weakens momentum.</p>
-              <p className="font-bold text-white">In other words, the problem is not always what you are selling. The problem is often how the sale is being handled inside the conversation.</p>
-            </div>
-          </div>
-          <div className="grid grid-cols-1 gap-4">
-            {[
-              "No qualification before giving the price",
-              "Weak trust-building in the first 3 messages",
-              "Poor payment confirmation flow",
-              "No structured follow-up system",
-              "No lead temperature tracking",
-              "Weak chat organization and lost messages"
-            ].map((item, i) => (
-              <div key={i} className="flex items-center gap-4 p-5 bg-white/5 rounded-2xl border border-white/10">
-                <div className="w-2 h-2 rounded-full bg-[#25D366]" />
-                <span className="font-bold text-zinc-100">{item}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </Section>
-
-      {/* Positioning & Before/After */}
-      <Section className="bg-zinc-50 border-t border-zinc-100">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-16">
-            <Badge>The Transformation</Badge>
-            <h2 className="text-4xl md:text-5xl font-black mb-6 leading-tight">
-              This Is Not Just a Toolkit. <br />
-              <span className="text-[#128C7E]">It’s a WhatsApp Conversion System.</span>
-            </h2>
-            <p className="text-xl text-zinc-600 font-medium max-w-2xl mx-auto">
-              Diagnose leaks → Install fixes → Use scripts → Track results. See the difference a structured approach makes in your daily chats.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-8">
-            {[
-              { before: "Weak first reply", after: "Stronger, qualifying first reply" },
-              { before: "Price-only responses", after: "Value-led price presentation" },
-              { before: "No follow-up strategy", after: "Structured, non-pushy follow-up" },
-              { before: "Messy, confusing close", after: "Cleaner, confident payment process" }
-            ].map((item, i) => (
-              <div key={i} className="bg-white p-8 rounded-3xl border border-zinc-100 shadow-sm flex flex-col gap-6">
-                <div className="flex items-start gap-4 opacity-60">
-                  <div className="w-8 h-8 rounded-full bg-red-50 flex items-center justify-center shrink-0">
-                    <X className="w-4 h-4 text-red-500" />
-                  </div>
-                  <div>
-                    <p className="text-xs font-bold text-red-500 uppercase tracking-wider mb-1">Before</p>
-                    <p className="text-zinc-600 font-medium">{item.before}</p>
-                  </div>
-                </div>
-                <div className="h-px bg-zinc-100 w-full" />
-                <div className="flex items-start gap-4">
-                  <div className="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center shrink-0">
-                    <Check className="w-4 h-4 text-[#25D366]" />
-                  </div>
-                  <div>
-                    <p className="text-xs font-bold text-[#128C7E] uppercase tracking-wider mb-1">After</p>
-                    <p className="text-zinc-900 font-bold">{item.after}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </Section>
-
-      {/* Product Intro - Bento Grid */}
-      <Section id="features">
-        <div className="text-center max-w-3xl mx-auto mb-20">
-          <Badge>The Solution</Badge>
-          <h2 className="text-4xl md:text-6xl font-black mb-8 leading-tight">
-            Inside the <br />
-            <span className="text-[#128C7E]">Rescue Kit Portal</span>
-          </h2>
-          <p className="text-xl text-zinc-600 font-bold">
-            Everything is organized for immediate action. No clutter. No overwhelm.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Large Feature 1 */}
-          <div className="md:col-span-2 p-10 rounded-[40px] bg-white border border-zinc-100 shadow-sm hover:shadow-xl transition-all group relative overflow-hidden">
-            <div className="relative z-10">
-              <div className="w-16 h-16 bg-green-50 rounded-2xl flex items-center justify-center mb-8 group-hover:bg-[#25D366] transition-colors">
-                <Copy className="w-8 h-8 text-[#128C7E] group-hover:text-white transition-colors" />
-              </div>
-              <h3 className="text-3xl font-black mb-4">100+ Copy-Ready Scripts</h3>
-              <p className="text-zinc-500 text-lg leading-relaxed font-medium max-w-md">
-                The heart of the system. Searchable, categorized scripts for first replies, price protection, objection handling, and ghosting recovery.
-              </p>
-            </div>
-            <div className="absolute -right-10 -bottom-10 w-64 h-64 bg-green-50 rounded-full blur-3xl opacity-50 group-hover:scale-150 transition-transform duration-700" />
-          </div>
-
-          {/* Small Feature 1 */}
-          <div className="p-10 rounded-[40px] bg-zinc-900 text-white shadow-sm hover:shadow-xl transition-all group">
-            <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mb-8 group-hover:bg-[#25D366] transition-colors">
-              <Layout className="w-8 h-8 text-white" />
-            </div>
-            <h3 className="text-2xl font-black mb-4">Guided Setup</h3>
-            <p className="text-zinc-400 leading-relaxed font-medium">
-              Step-by-step optimization to turn your WhatsApp profile into a conversion machine.
-            </p>
-          </div>
-
-          {/* Small Feature 2 */}
-          <div className="p-10 rounded-[40px] bg-white border border-zinc-100 shadow-sm hover:shadow-xl transition-all group">
-            <div className="w-16 h-16 bg-zinc-50 rounded-2xl flex items-center justify-center mb-8 group-hover:bg-green-50 transition-colors">
-              <BarChart3 className="w-8 h-8 text-zinc-400 group-hover:text-[#128C7E] transition-colors" />
-            </div>
-            <h3 className="text-2xl font-black mb-4">Lead Tracker</h3>
-            <p className="text-zinc-500 leading-relaxed font-medium">
-              A lightweight, interactive tool to ensure you never forget to follow up with a serious buyer.
-            </p>
-          </div>
-
-          {/* Large Feature 2 */}
-          <div className="md:col-span-2 p-10 rounded-[40px] bg-green-50 border border-green-100 shadow-sm hover:shadow-xl transition-all group relative overflow-hidden">
-            <div className="relative z-10">
-              <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mb-8">
-                <Clock className="w-8 h-8 text-[#128C7E]" />
-              </div>
-              <h3 className="text-3xl font-black mb-4 text-[#128C7E]">60-Minute Action Plan</h3>
-              <p className="text-zinc-600 text-lg leading-relaxed font-medium max-w-md">
-                Don't spend weeks learning. Follow our guided flow and get your new sales system live in under one hour.
-              </p>
-            </div>
-            <div className="absolute right-0 top-0 p-8 opacity-10">
-              <Zap className="w-32 h-32 text-[#128C7E]" />
-            </div>
-          </div>
-        </div>
-      </Section>
-
-      {/* Built for WhatsApp */}
-      <Section className="bg-white border-t border-zinc-100">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-16">
-            <Badge>Native Workflow</Badge>
-            <h2 className="text-4xl md:text-5xl font-black mb-6 leading-tight">
-              Built for How People <br />
-              <span className="text-[#128C7E]">Actually Sell on WhatsApp</span>
-            </h2>
-            <p className="text-xl text-zinc-600 font-medium max-w-2xl mx-auto">
-              This system aligns perfectly with WhatsApp's native features and the reality of how buyers behave in chat.
-            </p>
-          </div>
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="p-8 rounded-3xl bg-zinc-50 border border-zinc-100">
-              <div className="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center mb-6">
-                <Smartphone className="w-6 h-6 text-[#128C7E]" />
-              </div>
-              <h3 className="text-xl font-bold mb-3">Mobile-First Action</h3>
-              <p className="text-zinc-500 font-medium leading-relaxed">Designed to be used on your phone. One-tap script copying means you can reply to leads instantly without switching devices.</p>
-            </div>
-            <div className="p-8 rounded-3xl bg-zinc-50 border border-zinc-100">
-              <div className="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center mb-6">
-                <MessageSquare className="w-6 h-6 text-[#128C7E]" />
-              </div>
-              <h3 className="text-xl font-bold mb-3">Quick Replies & Labels</h3>
-              <p className="text-zinc-500 font-medium leading-relaxed">Learn how to organize your chats with labels and install the scripts directly into your WhatsApp Business quick replies.</p>
-            </div>
-            <div className="p-8 rounded-3xl bg-zinc-50 border border-zinc-100">
-              <div className="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center mb-6">
-                <ShieldCheck className="w-6 h-6 text-[#128C7E]" />
-              </div>
-              <h3 className="text-xl font-bold mb-3">Real Trust Realities</h3>
-              <p className="text-zinc-500 font-medium leading-relaxed">Includes guidance on using voice notes effectively and handling the real objections and ghosting behavior you face daily.</p>
-            </div>
-          </div>
-        </div>
-      </Section>
-
-      {/* Comparison Section - Us vs Them */}
-      <Section className="bg-zinc-50">
-        <div className="text-center mb-20">
-          <Badge>The Comparison</Badge>
-          <h2 className="text-4xl md:text-5xl font-black mb-6">Why This Is Different</h2>
-          <p className="text-xl text-zinc-600 font-bold">We built this for the busy seller who needs results, not more reading.</p>
+      {/* Testimonials (Moved Up for CRO) */}
+      <Section className="bg-zinc-50 border-b border-zinc-100">
+        <div className="text-center mb-16">
+          <Badge>Social Proof</Badge>
+          <h2 className="text-4xl md:text-5xl font-black mb-6">What Sellers Are Saying</h2>
+          <p className="text-xl text-zinc-600 font-bold">Real results from business owners using the Profit-Lock™ Method.</p>
         </div>
         
-        <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-          <div className="p-10 rounded-[40px] bg-white border border-zinc-200 opacity-60">
-            <h3 className="text-xl font-black mb-8 flex items-center gap-3 text-zinc-400">
-              <X className="w-6 h-6 text-red-500" />
-              Typical Digital Products
+        <div className="grid md:grid-cols-3 gap-8">
+          {[
+            { 
+              name: "Sarah A.", 
+              role: "IG Physical Product Vendor", 
+              quote: "I used to dread the 'how much' question because people always disappeared. The Price Protection scripts changed everything. I am closing 3x more sales weekly now.",
+              rating: 5
+            },
+            { 
+              name: "David O.", 
+              role: "Business Coach & Consultant", 
+              quote: "The Script Bank is a lifesaver. I just tap, copy, and send. It saves me hours of typing and I sound much more professional. Highly recommended!",
+              rating: 5
+            },
+            { 
+              name: "Michelle C.", 
+              role: "Digital Info Marketer", 
+              quote: "The Lead Tracker is so simple but so effective. I stopped losing hot leads in my messy chats. The portal format is way better than the PDFs I've bought before.",
+              rating: 5
+            }
+          ].map((t, i) => (
+            <div key={i} className="p-10 rounded-[40px] bg-white border border-zinc-100 shadow-sm relative">
+              <div className="flex gap-1 mb-6">
+                {[...Array(t.rating)].map((_, i) => (
+                  <Star key={i} className="w-4 h-4 text-yellow-400 fill-yellow-400" />
+                ))}
+              </div>
+              <p className="text-lg text-zinc-700 font-medium leading-relaxed mb-8 italic">"{t.quote}"</p>
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-zinc-100 rounded-full flex items-center justify-center font-black text-zinc-400">
+                  {t.name[0]}
+                </div>
+                <div>
+                  <p className="font-black text-zinc-900">{t.name}</p>
+                  <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest">{t.role}</p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </Section>
+
+      {/* Pain + Agitation Section */}
+      <Section className="bg-white relative border-b border-zinc-100">
+        <div className="max-w-4xl mx-auto text-center">
+          <Badge>The Real Problem</Badge>
+          <h2 className="text-3xl md:text-5xl font-black mb-8 leading-tight tracking-tight text-zinc-900">
+            You are not losing sales because your product is bad...
+            <br />
+            <br />
+            <span className="text-red-500">You are losing sales because your WhatsApp conversations are not designed to convert.</span>
+          </h2>
+          
+          <div className="mt-12 bg-zinc-50 rounded-3xl p-8 md:p-12 border border-zinc-200">
+            <h3 className="text-xl md:text-2xl font-bold mb-8 flex items-center justify-center gap-3">
+              <AlertCircle className="w-6 h-6 text-red-500" />
+              Do these scenarios sound familiar?
             </h3>
-            <ul className="space-y-6">
-              {[
-                "Static PDFs that sit in your downloads",
-                "Hard to navigate on a small phone screen",
-                "Easy to forget and never actually implement",
-                "Static text you have to type out manually",
-                "No interactive tracking or practical tools"
-              ].map((item, i) => (
-                <li key={i} className="flex items-start gap-4 text-zinc-500 font-medium">
-                  <div className="w-1.5 h-1.5 rounded-full bg-zinc-300 mt-2 shrink-0" />
-                  {item}
-                </li>
-              ))}
-            </ul>
+            
+            <div className="grid md:grid-cols-2 gap-6 text-left">
+              <div className="flex items-start gap-4">
+                <div className="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center shrink-0">
+                  <X className="w-4 h-4 text-red-600" />
+                </div>
+                <div>
+                  <p className="font-bold text-zinc-900 mb-1">Pricing and disappearing</p>
+                  <p className="text-zinc-600 text-sm">They ask "How much", you reply with the price, and they vanish into thin air.</p>
+                </div>
+              </div>
+              
+              <div className="flex items-start gap-4">
+                <div className="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center shrink-0">
+                  <X className="w-4 h-4 text-red-600" />
+                </div>
+                <div>
+                  <p className="font-bold text-zinc-900 mb-1">Endless chatting without payment</p>
+                  <p className="text-zinc-600 text-sm">You answer 20 questions, share pictures and videos, but no alert drops.</p>
+                </div>
+              </div>
+              
+              <div className="flex items-start gap-4">
+                <div className="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center shrink-0">
+                  <X className="w-4 h-4 text-red-600" />
+                </div>
+                <div>
+                  <p className="font-bold text-zinc-900 mb-1">Following up without response</p>
+                  <p className="text-zinc-600 text-sm">You check back in after 2 days, and they just blue-tick you or ignore it entirely.</p>
+                </div>
+              </div>
+              
+              <div className="flex items-start gap-4">
+                <div className="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center shrink-0">
+                  <X className="w-4 h-4 text-red-600" />
+                </div>
+                <div>
+                  <p className="font-bold text-zinc-900 mb-1">Being ignored after sending details</p>
+                  <p className="text-zinc-600 text-sm">You send your account details like they asked, and then... nothing.</p>
+                </div>
+              </div>
+            </div>
+            
+            <div className="mt-10 pt-8 border-t border-zinc-200">
+              <p className="text-zinc-500 font-medium italic text-center">
+                "Stop blaming the economy or thinking you need more traffic. You just need a better system to turn the chats you ALREADY have into alerts."
+              </p>
+            </div>
           </div>
           
-          <div className="p-10 rounded-[40px] bg-white border-2 border-[#25D366] shadow-2xl shadow-green-500/10 relative">
-            <div className="absolute -top-4 right-10 bg-[#25D366] text-white px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest">
-              Recommended
+          <div className="flex flex-col items-center mt-12 gap-4">
+            <Button onClick={handleCheckoutClick} className="w-full sm:w-auto px-10 py-5 text-lg">
+              Start Closing More Sales Now
+              <ArrowRight className="ml-2 w-5 h-5" />
+            </Button>
+            {/* Checkout Reassurance Block */}
+            <div className="flex flex-wrap items-center justify-center gap-3 text-zinc-500 text-[10px] sm:text-xs font-bold uppercase tracking-widest">
+              <div className="flex items-center gap-1.5"><Lock className="w-3.5 h-3.5 text-[#25D366]" /> Secure checkout via Selar</div>
+              <div className="hidden sm:block text-zinc-300">•</div>
+              <div className="flex items-center gap-1.5"><Zap className="w-3.5 h-3.5 text-yellow-500" /> Instant access</div>
             </div>
-            <h3 className="text-xl font-black mb-8 flex items-center gap-3 text-[#128C7E]">
-              <CheckCircle2 className="w-6 h-6 text-[#25D366]" />
-              The Rescue Kit Portal
-            </h3>
-            <ul className="space-y-6">
-              {[
-                "Start with a diagnostic Sales Leak Audit",
-                "Guided 7-Day Rescue Sprint for fast results",
-                "One-tap copyable scripts for immediate use",
-                "Interactive setup and visual progress tracking",
-                "Mobile-first action flow for easier implementation"
-              ].map((item, i) => (
-                <li key={i} className="flex items-start gap-4 text-zinc-900 font-bold">
-                  <Check className="w-5 h-5 text-[#25D366] mt-0.5 shrink-0" />
-                  {item}
-                </li>
-              ))}
-            </ul>
+          </div>
+        </div>
+      </Section>
+
+      {/* What You Get Section */}
+      <Section className="bg-zinc-50 relative" id="features">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-16">
+            <Badge>What's Inside?</Badge>
+            <h2 className="text-3xl md:text-5xl font-black mb-6 leading-tight">
+              Everything You Need to <br />
+              <span className="text-[#128C7E]">Turn Chats Into Alerts</span>
+            </h2>
+            <p className="text-lg text-zinc-600 font-medium max-w-2xl mx-auto">
+              Skip the guesswork. Here is exactly what you get inside the Rescue Kit portal as soon as you pay.
+            </p>
+          </div>
+          
+          <div className="grid md:grid-cols-2 gap-6">
+            <div className="bg-white p-6 rounded-3xl border border-zinc-200 flex items-start gap-4 shadow-sm hover:shadow-md transition-shadow">
+              <div className="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center shrink-0">
+                <Search className="w-6 h-6 text-[#128C7E]" />
+              </div>
+              <div>
+                <h3 className="font-black text-lg text-zinc-900 mb-1">WhatsApp Sales Leak Audit</h3>
+                <p className="text-zinc-500 text-sm leading-relaxed">Find exactly where your current process is losing money so you can plug the holes fast.</p>
+              </div>
+            </div>
+            
+            <div className="bg-white p-6 rounded-3xl border border-zinc-200 flex items-start gap-4 shadow-sm hover:shadow-md transition-shadow">
+              <div className="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center shrink-0">
+                <Copy className="w-6 h-6 text-[#128C7E]" />
+              </div>
+              <div>
+                <h3 className="font-black text-lg text-zinc-900 mb-1">Copy & Paste Sales Scripts</h3>
+                <p className="text-zinc-500 text-sm leading-relaxed">Never wonder what to say again. Over 100 tested messages you can copy with one tap.</p>
+              </div>
+            </div>
+            
+            <div className="bg-white p-6 rounded-3xl border border-zinc-200 flex items-start gap-4 shadow-sm hover:shadow-md transition-shadow">
+              <div className="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center shrink-0">
+                <ShieldCheck className="w-6 h-6 text-[#128C7E]" />
+              </div>
+              <div>
+                <h3 className="font-black text-lg text-zinc-900 mb-1">Price Objection Handling Replies</h3>
+                <p className="text-zinc-500 text-sm leading-relaxed">Scripts specifically designed to justify your price and keep them interested when they complain it's too high.</p>
+              </div>
+            </div>
+            
+            <div className="bg-white p-6 rounded-3xl border border-zinc-200 flex items-start gap-4 shadow-sm hover:shadow-md transition-shadow">
+              <div className="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center shrink-0">
+                <Clock className="w-6 h-6 text-[#128C7E]" />
+              </div>
+              <div>
+                <h3 className="font-black text-lg text-zinc-900 mb-1">Follow-Up Message Templates</h3>
+                <p className="text-zinc-500 text-sm leading-relaxed">Non-pushy, professional follow-up messages that revive dead chats without sounding desperate.</p>
+              </div>
+            </div>
+            
+            <div className="bg-white p-6 rounded-3xl border border-zinc-200 flex items-start gap-4 shadow-sm hover:shadow-md transition-shadow">
+              <div className="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center shrink-0">
+                <CreditCard className="w-6 h-6 text-[#128C7E]" />
+              </div>
+              <div>
+                <h3 className="font-black text-lg text-zinc-900 mb-1">Closing & Payment Scripts</h3>
+                <p className="text-zinc-500 text-sm leading-relaxed">Push hesitant buyers over the line to secure the alert gracefully.</p>
+              </div>
+            </div>
+            
+            <div className="bg-white p-6 rounded-3xl border border-zinc-200 flex items-start gap-4 shadow-sm hover:shadow-md transition-shadow">
+              <div className="w-12 h-12 rounded-xl bg-zinc-900 flex items-center justify-center shrink-0">
+                <Smartphone className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h3 className="font-black text-lg text-zinc-900 mb-1">Guided Setup Portal</h3>
+                <p className="text-zinc-500 text-sm leading-relaxed">A clean, mobile-friendly interface so you can find what you need in seconds while chatting.</p>
+              </div>
+            </div>
+          </div>
+          
+          <div className="mt-12 text-center">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-yellow-100 text-yellow-800 rounded-full text-sm font-bold border border-yellow-200">
+              <Star className="w-4 h-4 fill-yellow-500 text-yellow-500" />
+              Plus Bonus Templates Included
+            </div>
+            
+            <div className="mt-8 flex flex-col items-center gap-4">
+              <Button onClick={handleCheckoutClick} className="w-full sm:w-auto px-10 py-5 text-lg">
+                Unlock the Scripts Now
+                <ArrowRight className="ml-2 w-5 h-5" />
+              </Button>
+              {/* Checkout Reassurance Block */}
+              <div className="flex flex-wrap items-center justify-center gap-3 text-zinc-500 text-[10px] sm:text-xs font-bold uppercase tracking-widest">
+                <div className="flex items-center gap-1.5"><Lock className="w-3.5 h-3.5 text-[#25D366]" /> Secure checkout via Selar</div>
+                <div className="hidden sm:block text-zinc-300">•</div>
+                <div className="flex items-center gap-1.5"><Smartphone className="w-3.5 h-3.5 text-blue-500" /> No technical skills needed</div>
+              </div>
+            </div>
           </div>
         </div>
       </Section>
@@ -859,56 +760,6 @@ export default function App() {
         </div>
       </Section>
 
-      {/* Testimonials */}
-      <Section>
-        <div className="text-center mb-20">
-          <Badge>Social Proof</Badge>
-          <h2 className="text-4xl md:text-5xl font-black mb-6">What Sellers Are Saying</h2>
-          <p className="text-xl text-zinc-600 font-bold">Real results from business owners using the Profit-Lock™ Method.</p>
-        </div>
-        
-        <div className="grid md:grid-cols-3 gap-8">
-          {[
-            { 
-              name: "Sarah J.", 
-              role: "Boutique Owner", 
-              quote: "I used to dread the 'how much' question because people always disappeared. The Price Protection scripts changed everything. I'm closing 3x more sales now.",
-              rating: 5
-            },
-            { 
-              name: "David K.", 
-              role: "Service Provider", 
-              quote: "The Script Bank is a lifesaver. I just tap, copy, and send. It saves me so much time and I sound much more professional. Highly recommended!",
-              rating: 5
-            },
-            { 
-              name: "Michelle T.", 
-              role: "Digital Seller", 
-              quote: "The Lead Tracker is so simple but so effective. I stopped losing hot leads in my messy chats. The portal format is way better than the PDFs I've bought before.",
-              rating: 5
-            }
-          ].map((t, i) => (
-            <div key={i} className="p-10 rounded-[40px] bg-white border border-zinc-100 shadow-sm relative">
-              <div className="flex gap-1 mb-6">
-                {[...Array(t.rating)].map((_, i) => (
-                  <Star key={i} className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-                ))}
-              </div>
-              <p className="text-lg text-zinc-700 font-medium leading-relaxed mb-8 italic">"{t.quote}"</p>
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-zinc-100 rounded-full flex items-center justify-center font-black text-zinc-400">
-                  {t.name[0]}
-                </div>
-                <div>
-                  <p className="font-black text-zinc-900">{t.name}</p>
-                  <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest">{t.role}</p>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </Section>
-
       {/* Guarantee Section */}
       <Section className="bg-green-50">
         <div className="max-w-5xl mx-auto bg-white rounded-[60px] p-12 md:p-20 shadow-2xl shadow-green-500/5 border border-green-100 relative overflow-hidden text-center">
@@ -932,37 +783,70 @@ export default function App() {
         </div>
       </Section>
 
-      {/* How It Works */}
-      <Section className="bg-zinc-900 text-white rounded-[60px] mx-6 my-12 overflow-hidden relative">
-        <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
-          <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(#25D366_1px,transparent_1px)] [background-size:40px_40px]" />
-        </div>
-        
-        <div className="relative z-10">
-          <div className="text-center mb-20">
-            <Badge className="bg-white/10 text-white border-white/20">The Process</Badge>
-            <h2 className="text-4xl md:text-5xl font-black mb-6">From Ghosted to Closed <br />in 4 Simple Steps</h2>
-            <p className="text-xl text-zinc-400 font-medium">Implementation is fast, guided, and built for busy sellers.</p>
-          </div>
+      {/* How It Works & Visual Mockups */}
+      <Section className="bg-white relative overflow-hidden text-center mx-auto border-t border-zinc-100">
+        <div className="max-w-5xl mx-auto">
+          <Badge>The Simple Process</Badge>
+          <h2 className="text-3xl md:text-5xl font-black mb-6">How It Works</h2>
+          <p className="text-lg text-zinc-600 font-medium mb-12">Implementation is fast, guided, and built for busy sellers.</p>
           
-          <div className="grid md:grid-cols-4 gap-8">
-            {[
-              { step: "01", title: "Take the Audit", desc: "Start with the Sales Leak Audit to find exactly where you're losing money." },
-              { step: "02", title: "Set Up Your System", desc: "Follow the guided flow to optimize your WhatsApp profile and quick replies." },
-              { step: "03", title: "Use the Scripts", desc: "Deploy the Script Bank and start the 7-Day Rescue Sprint." },
-              { step: "04", title: "Track & Recover", desc: "Use the tracker to follow up, recover lost leads, and close more sales." }
-            ].map((item, i) => (
-              <div key={i} className="relative group">
-                <div className="text-7xl font-black text-white/5 mb-4 group-hover:text-[#25D366]/10 transition-colors duration-500">{item.step}</div>
-                <div className="absolute top-8 left-0">
-                  <h3 className="text-xl font-black mb-3 text-white">{item.title}</h3>
-                  <p className="text-zinc-400 text-sm leading-relaxed font-medium">{item.desc}</p>
+          <div className="grid md:grid-cols-3 gap-8 text-left mb-16">
+            <div className="relative group p-6 border border-zinc-200 rounded-3xl bg-zinc-50">
+              <div className="text-5xl font-black text-green-200 mb-2">1</div>
+              <h3 className="text-xl font-black mb-2 text-zinc-900">Get Instant Access After Payment</h3>
+              <p className="text-zinc-600 text-sm leading-relaxed font-medium">Checkout securely via Selar and instantly receive your magic link to login.</p>
+            </div>
+            <div className="relative group p-6 border border-zinc-200 rounded-3xl bg-zinc-50">
+              <div className="text-5xl font-black text-green-200 mb-2">2</div>
+              <h3 className="text-xl font-black mb-2 text-zinc-900">Copy Proven Scripts Into Your Chats</h3>
+              <p className="text-zinc-600 text-sm leading-relaxed font-medium">Search for the exact script you need, tap to copy, and paste it into WhatsApp.</p>
+            </div>
+            <div className="relative group p-6 border border-zinc-200 rounded-3xl bg-zinc-50">
+              <div className="text-5xl font-black text-green-200 mb-2">3</div>
+              <h3 className="text-xl font-black mb-2 text-zinc-900">Start Closing More Enquiries</h3>
+              <p className="text-zinc-600 text-sm leading-relaxed font-medium">Watch as you confidently handle objections and secure payments without coming across as pushy.</p>
+            </div>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-8 items-center bg-zinc-900 text-left rounded-[40px] p-8 md:p-12">
+            <div>
+              <h3 className="text-2xl md:text-3xl font-black mb-6 text-white leading-tight">
+                See How It Looks <br/><span className="text-[#25D366]">Inside Your Chats</span>
+              </h3>
+              <p className="text-zinc-400 mb-8 max-w-sm">
+                No more guessing. The scripts are formatted exactly as you would type them—just copy, paste, and let them read naturally.
+              </p>
+              <Button onClick={handleCheckoutClick} className="w-full sm:w-auto px-8 py-4">
+                Get the Scripts Now
+              </Button>
+            </div>
+            
+            {/* Visual Chat Mockup */}
+            <div className="bg-zinc-800 rounded-3xl p-4 shadow-xl border border-zinc-700">
+              <div className="space-y-4 text-sm font-medium">
+                {/* Received Message */}
+                <div className="flex flex-col items-start gap-1">
+                  <div className="bg-white text-zinc-800 p-3 rounded-2xl rounded-tl-sm shadow-sm inline-block max-w-[85%]">
+                    How much for the package in your story?
+                  </div>
                 </div>
-                {i < 3 && (
-                  <div className="hidden lg:block absolute top-1/2 -right-4 w-8 h-px bg-white/10" />
-                )}
+                {/* Sent Message (Using Script) */}
+                <div className="flex flex-col items-end gap-1">
+                  <div className="bg-[#DCFFD1] text-zinc-900 p-3 rounded-2xl rounded-tr-sm shadow-sm inline-block max-w-[85%] border border-[#25D366]/20">
+                    Hi! Thanks for reaching out. Before I give you the price, can I ask a quick question to make sure it's exactly what you need?
+                  </div>
+                  <div className="flex items-center gap-1 text-[10px] text-zinc-500 mr-1">
+                    <Check className="w-3 h-3 text-[#25D366]" /><Check className="w-3 h-3 text-[#25D366] -ml-2" /> Read
+                  </div>
+                </div>
+                {/* Received Message */}
+                <div className="flex flex-col items-start gap-1">
+                  <div className="bg-white text-zinc-800 p-3 rounded-2xl rounded-tl-sm shadow-sm inline-block max-w-[85%]">
+                    Sure go ahead
+                  </div>
+                </div>
               </div>
-            ))}
+            </div>
           </div>
         </div>
       </Section>
@@ -995,82 +879,71 @@ export default function App() {
         </div>
       </Section>
 
-      {/* Product Stack */}
-      <Section id="pricing" className="bg-zinc-900 text-white rounded-[60px] mx-6 my-12">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-20">
-            <Badge className="bg-white/10 text-white border-white/20">The Full Stack</Badge>
-            <h2 className="text-4xl md:text-6xl font-black mb-6">What You Get With Your Access</h2>
-            <p className="text-xl text-zinc-400 font-medium">Everything is delivered inside one clean, mobile-first portal.</p>
+      {/* Product Stack / Pricing */}
+      <Section id="pricing" className="bg-zinc-900 text-white rounded-[40px] mx-6 my-12 shadow-2xl relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-full opacity-[0.03] pointer-events-none">
+          <div className="w-full h-full bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]" />
+        </div>
+        <div className="max-w-4xl mx-auto relative z-10">
+          <div className="text-center mb-12">
+            <Badge className="bg-white/10 text-white border-white/20">Pricing</Badge>
+            <h2 className="text-3xl md:text-5xl font-black mb-4">Are you ready to turn your chats into alerts?</h2>
+            <p className="text-lg text-zinc-400 font-medium">Get instant access to everything in the portal today.</p>
           </div>
 
-          <div className="bg-white rounded-[40px] overflow-hidden shadow-2xl">
-            <div className="p-10 md:p-16 text-zinc-900">
-              <div className="grid md:grid-cols-2 gap-16">
-                <div className="space-y-6">
+          <div className="bg-white rounded-[32px] overflow-hidden shadow-2xl border-4 border-zinc-800">
+            <div className="p-8 md:p-12 text-zinc-900">
+              <div className="grid md:grid-cols-2 gap-12">
+                <div className="space-y-5">
+                  <h3 className="font-black text-2xl mb-6">Here's what you get:</h3>
                   {[
                     "Private Access Portal (Lifetime)",
-                    "Sales Leak Audit",
-                    "100+ Searchable Script Bank",
-                    "Before vs After Chat Examples",
-                    "Qualification Flow",
-                    "Payment Confirmation Protocol",
-                    "Quick Replies Install Worksheet",
-                    "7-Day Rescue Sprint",
+                    "WhatsApp Sales Leak Audit",
+                    "Over 100+ Searchable Scripts",
+                    "Price Objection & Ghosting Frameworks",
                     "Lead & Order Tracking Tool",
-                    "Status Selling Mini-Module"
+                    "Bonus: 60-Minute Guided Setup"
                   ].map((item, i) => (
-                    <div key={i} className="flex items-center gap-4">
-                      <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center shrink-0">
-                        <Check className="w-3.5 h-3.5 text-[#128C7E]" />
+                    <div key={i} className="flex items-center gap-3">
+                      <div className="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center shrink-0">
+                        <Check className="w-3 h-3 text-[#128C7E]" />
                       </div>
-                      <span className="font-bold text-zinc-800">{item}</span>
+                      <span className="font-bold text-zinc-700 text-sm md:text-base">{item}</span>
                     </div>
                   ))}
                 </div>
-                <div className="flex flex-col justify-center text-center md:text-left">
-                  <div className="bg-zinc-50 p-10 rounded-3xl border border-zinc-100 relative overflow-hidden">
-                    <div className="absolute top-0 left-0 right-0 bg-red-50 border-b border-red-100 text-red-600 py-2 text-center text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-1.5">
-                      <Clock className="w-3.5 h-3.5" />
-                      Price increases to {pricing.currencySymbol}{pricing.originalAmount.toLocaleString()} soon
+                <div className="flex flex-col justify-center text-center bg-zinc-50 p-8 rounded-3xl border border-zinc-200 relative">
+                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-[#25D366] text-white px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-md whitespace-nowrap">
+                    Limited-Time Launch Pricing
+                  </div>
+                  
+                  <div className="mt-4 mb-2">
+                    <p className="text-zinc-500 font-bold uppercase tracking-widest text-xs mb-1">Today's Price</p>
+                    <div className="flex items-center justify-center gap-3">
+                      <span className="text-5xl md:text-6xl font-black text-zinc-900">{pricing.currencySymbol}{pricing.amount.toLocaleString()}</span>
                     </div>
-                    <div className="mb-6 mt-4">
-                      <p className="text-zinc-400 font-bold uppercase tracking-widest text-[10px] mb-1">Total Value: {pricing.currencySymbol}{(pricing.amount * 12.2).toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
-                      <p className="text-zinc-900 font-bold uppercase tracking-widest text-xs">One-Time Payment</p>
-                    </div>
-                    <div className="flex items-baseline justify-center md:justify-start gap-3 mb-8">
-                      <span className="text-6xl font-black text-zinc-900">{pricing.currencySymbol}{pricing.amount.toLocaleString()}</span>
-                      <span className="text-2xl font-bold text-zinc-400 line-through decoration-red-500/50">{pricing.currencySymbol}{pricing.originalAmount.toLocaleString()}</span>
-                    </div>
-                    <Button onClick={handleCheckoutClick} className="w-full text-xl py-6 mb-4">
-                      Get Instant Access
-                    </Button>
-                    <p className="text-zinc-500 text-xs font-bold text-center mb-2">
-                      Instant access delivered securely to your email.
-                    </p>
-                    <p className="text-red-500 text-xs font-bold text-center mb-6">
-                      Limited spots available at this price. Secure yours now!
-                    </p>
-                    <div className="flex flex-col items-center gap-3">
-                      <div className="flex flex-wrap items-center justify-center gap-4 text-zinc-400 text-[10px] font-bold uppercase tracking-widest">
-                        <div className="flex items-center gap-1.5"><Lock className="w-3.5 h-3.5" /> SSL Secured</div>
-                        <div className="flex items-center gap-1.5"><ShieldCheck className="w-3.5 h-3.5" /> 14-Day Guarantee</div>
-                        <div className="flex items-center gap-1.5"><CreditCard className="w-3.5 h-3.5" /> Safe Payment</div>
-                      </div>
-                      <p className="text-[10px] text-zinc-400 text-center max-w-[200px] leading-relaxed mt-2">
-                        *Optional upgrades available inside: AI-personalized scripts, setup sprints, and storefront add-ons.
-                      </p>
-                    </div>
+                  </div>
+                  
+                  <div className="mb-8">
+                     <p className="text-zinc-400 text-sm font-bold">
+                       Regular Price: <span className="line-through">{pricing.currencySymbol}{pricing.originalAmount.toLocaleString()}</span>
+                     </p>
+                     <p className="text-zinc-900 font-black text-xs uppercase tracking-widest mt-2 px-3 py-1 bg-yellow-200 inline-block rounded-md">One-time payment. No subscription.</p>
+                  </div>
+                  
+                  <Button onClick={handleCheckoutClick} className="w-full text-lg py-5 mb-4 hover:scale-[1.02]">
+                    Get Instant Access
+                  </Button>
+                  <p className="text-zinc-500 text-xs font-bold text-center">
+                    Instant access delivered securely to your email.
+                  </p>
+                  <div className="flex flex-wrap items-center justify-center gap-2 mt-4 text-zinc-400 text-[10px] font-bold uppercase tracking-wider">
+                    <div className="flex items-center gap-1"><Lock className="w-3 h-3" /> Secure checkout</div>
+                    <div className="flex items-center gap-1"><ShieldCheck className="w-3 h-3" /> Safe Payment via Selar</div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-          
-          <div className="mt-16 text-center">
-            <p className="text-xl font-bold text-zinc-400">
-              "A Few Recovered Sales Can Pay for This Quickly"
-            </p>
           </div>
         </div>
       </Section>
@@ -1171,7 +1044,7 @@ export default function App() {
             <div className="absolute top-0 left-8 -translate-y-1/2 text-6xl text-[#25D366] opacity-20 font-serif">"</div>
             <div className="flex flex-col md:flex-row gap-6 items-center md:items-start">
               <div className="w-16 h-16 rounded-full bg-zinc-200 shrink-0 overflow-hidden border-2 border-white shadow-md">
-                <img src="https://picsum.photos/seed/sarah/100/100" alt="Customer" className="w-full h-full object-cover" />
+                <img src="https://picsum.photos/seed/sarah/100/100" alt="Customer" loading="lazy" decoding="async" className="w-full h-full object-cover" />
               </div>
               <div>
                 <div className="flex gap-1 mb-3">
@@ -1201,16 +1074,11 @@ export default function App() {
           </div>
           <div className="bg-white rounded-[32px] p-10 shadow-sm border border-zinc-100">
             {[
-              { q: "How do I access the Whatsapp Rescue Kit after purchasing?", a: "Immediately after your secure payment, your email is whitelisted in our system. Just go to app.chatsalesrescue.com, enter the email you used to purchase, and we will send you a secure, one-click login link." },
-              { q: "Do I need to create a password?", a: "No! We use a modern, passwordless security system. Every time you want to log in, you just enter your email and click the magic link we send you. It's faster and much more secure." },
-              { q: "What if I use a different email to log in?", a: "For security reasons, the portal will only grant access to the exact email address you used during checkout." },
-              { q: "Is this a course?", a: "No. This is a private-access implementation portal with practical tools, scripts, setup resources, and guided flow to help you improve your WhatsApp sales process quickly." },
-              { q: "Is this only for product sellers?", a: "No. It works for both product sellers and service providers, as long as WhatsApp is part of how you sell or handle buyer inquiries." },
-              { q: "Do I need WhatsApp Business?", a: "It works best with WhatsApp Business because features like quick replies, labels, and catalog tools make the system even more effective." },
-              { q: "Will this work on mobile?", a: "Yes. The portal is designed mobile-first so it is easy to use on your phone." },
-              { q: "Can I copy the scripts directly?", a: "Yes. The Script Bank is designed for fast use, with scripts organized clearly and built to be easy to copy and use." },
-              { q: "Is this better than a PDF bundle?", a: "Yes. The portal is structured to be easier to navigate, easier to use, and easier to implement than a folder of static files." },
-              { q: "What exactly do I get?", a: "You get private portal access to the Main Guide, Script Bank, Setup Checklist, 60-Minute Action Plan, Lead & Order Tracker, and all included bonuses." }
+              { q: "Will this work for my business?", a: "Yes. Whether you sell physical products (clothes, devices, skincare) or services (consulting, graphic design), any business that relies on chatting to close deals will benefit immensely from these proven scripts." },
+              { q: "Do I need any special experience or technical skills?", a: "Not at all. The portal is extremely easy to use. If you know how to copy text and paste it into WhatsApp, you have all the skills you need." },
+              { q: "How do I access the portal after payment?", a: "After you checkout securely via Selar, you'll immediately receive an email with your Magic Link. Click it, and you're inside the portal. No passwords required." },
+              { q: "Is this a long, boring course I have to watch?", a: "No! This is an action-oriented implementation toolkit. It consists of ready-to-use text scripts, quick setup trackers, and practical templates. It's built for you to use in minutes, not weeks." },
+              { q: "What if I have issues accessing it?", a: "You can reach out to our dedicated support via WhatsApp (+234 816 218 6221) or email anytime. We're here to help." }
             ].map((faq, i) => (
               <FAQItem key={i} question={faq.q} answer={faq.a} />
             ))}
@@ -1231,7 +1099,7 @@ export default function App() {
           </p>
           <div className="flex flex-col items-center gap-6">
             <Button onClick={handleCheckoutClick} className="w-full sm:w-auto px-16 py-6 text-2xl">
-              Get Instant Access
+              Get the Rescue Kit Now
             </Button>
             <p className="text-zinc-500 font-bold text-sm -mt-2">
               Instant access delivered securely to your email.
@@ -1244,39 +1112,47 @@ export default function App() {
       </Section>
 
       {/* Footer */}
-      <footer className="bg-white py-20 border-t border-zinc-100">
-        <div className="max-w-7xl mx-auto px-6 text-center">
-          <div className="flex items-center justify-center gap-3 mb-8">
-            <div className="w-8 h-8 bg-[#25D366] rounded-lg flex items-center justify-center shrink-0">
-              <ShieldCheck className="w-5 h-5 text-white" />
+      <footer className="bg-white py-16 border-t border-zinc-100">
+        <div className="max-w-5xl mx-auto px-6 text-center">
+          <div className="flex flex-col items-center justify-center gap-4 mb-8">
+            <span className="font-black text-xl tracking-tight text-zinc-800">chatsalesrescue.com</span>
+            <div className="flex items-center gap-2 text-sm font-bold text-zinc-500 bg-zinc-50 px-4 py-2 rounded-full border border-zinc-100">
+              <Lock className="w-4 h-4 text-[#25D366]" /> Secure checkout powered by Selar
             </div>
-            <span className="font-black text-lg sm:text-xl tracking-tight">WhatsApp Sales Rescue Kit</span>
           </div>
-          <p className="text-zinc-400 font-bold text-sm mb-10 max-w-md mx-auto leading-relaxed">
-            © 2026 Profit-Lock™ Method. All rights reserved. <br />
-            Designed for high-converting WhatsApp sellers.
+          
+          <div className="flex flex-col sm:flex-row justify-center items-stretch sm:items-center gap-4 sm:gap-6 mb-10 text-zinc-600 font-medium">
+             <div className="flex items-center justify-center gap-2 bg-zinc-50 sm:bg-transparent py-4 sm:py-0 rounded-xl sm:rounded-none border border-zinc-100 sm:border-none">
+                <MessageSquare className="w-5 h-5 sm:w-4 sm:h-4 text-[#25D366]" />
+                <span className="text-sm sm:text-base">Support via WhatsApp:</span> <a href="https://wa.me/2348162186221" className="text-zinc-900 font-bold hover:text-[#128C7E] transition-colors pl-1 py-1">+234 816 218 6221</a>
+             </div>
+             <div className="hidden sm:block text-zinc-300">•</div>
+             <div className="flex items-center justify-center gap-2 bg-zinc-50 sm:bg-transparent py-4 sm:py-0 rounded-xl sm:rounded-none border border-zinc-100 sm:border-none">
+                <span className="font-bold text-lg sm:text-base">@</span>
+                <span className="text-sm sm:text-base">Email:</span> <a href="mailto:support@chatsalesrescue.com" className="text-zinc-900 font-bold hover:text-[#128C7E] transition-colors pl-1 py-1">support@chatsalesrescue.com</a>
+             </div>
+          </div>
+          
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 sm:gap-8 text-xs font-bold text-zinc-500 uppercase tracking-wider mb-10 w-full">
+            <a href="https://app.chatsalesrescue.com/access" className="py-4 px-6 sm:py-2 sm:px-0 hover:text-zinc-900 transition-colors text-center bg-zinc-50 sm:bg-transparent rounded-xl sm:rounded-none border border-zinc-100 sm:border-none block">Member Login</a>
+            <Link to="/terms-of-service" className="py-4 px-6 sm:py-2 sm:px-0 hover:text-zinc-900 transition-colors text-center bg-zinc-50 sm:bg-transparent rounded-xl sm:rounded-none border border-zinc-100 sm:border-none block">Delivery & Refund Policy</Link>
+            <Link to="/privacy-policy" className="py-4 px-6 sm:py-2 sm:px-0 hover:text-zinc-900 transition-colors text-center bg-zinc-50 sm:bg-transparent rounded-xl sm:rounded-none border border-zinc-100 sm:border-none block">Privacy Policy</Link>
+          </div>
+          <p className="text-zinc-400 font-bold text-xs pb-16 sm:pb-0">
+            © {new Date().getFullYear()} Profit-Lock™ Method. All rights reserved.
           </p>
-          <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-4 text-[10px] font-black text-zinc-400 uppercase tracking-[0.2em]">
-            <a href="https://app.chatsalesrescue.com/access" className="hover:text-zinc-900 transition-colors">Member Login</a>
-            <Link to="/terms-of-service" className="hover:text-zinc-900 transition-colors">Terms of Service</Link>
-            <Link to="/privacy-policy" className="hover:text-zinc-900 transition-colors">Privacy Policy</Link>
-            <Link to="/support-center" className="hover:text-zinc-900 transition-colors">Support Center</Link>
-          </div>
         </div>
       </footer>
 
       {/* Sticky Mobile CTA */}
       <div className="fixed bottom-0 left-0 right-0 p-4 z-40 sm:hidden">
-        <div className="bg-white/80 backdrop-blur-xl p-3 rounded-2xl border border-zinc-100 shadow-2xl flex flex-col items-center">
-          <Button onClick={handleCheckoutClick} className="w-full py-4 shadow-none">
+        <div className="bg-white/95 backdrop-blur-xl p-4 rounded-[28px] border border-zinc-200 shadow-[0_-10px_40px_-5px_rgba(0,0,0,0.1)] flex flex-col items-center">
+          <Button onClick={handleCheckoutClick} className="w-full py-4 text-base shadow-lg shadow-[#25D366]/20">
             Get Instant Access — {pricing.currencySymbol}{pricing.amount.toLocaleString()}
           </Button>
-          <p className="text-zinc-500 text-[10px] font-bold text-center mt-2">
-            Instant access delivered securely to your email.
-          </p>
-          <p className="text-red-500 text-[10px] font-bold text-center mt-1">
-            Limited spots available at this price. Secure yours now!
-          </p>
+          <div className="flex items-center gap-1.5 mt-3 text-zinc-500 text-[10px] font-bold uppercase tracking-widest">
+             <Lock className="w-3 h-3 text-[#25D366]" /> Secure checkout via Selar
+          </div>
         </div>
       </div>
 

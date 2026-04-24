@@ -14,7 +14,7 @@ export interface PricingTier {
 export const PRICING_CONFIG: Record<CountryCode, PricingTier> = {
   US: { country: 'United States', code: 'US', currencyCode: 'USD', currencySymbol: '$', amount: 47, originalAmount: 497, gateways: ['paypal', 'flutterwave'], defaultGateway: 'paypal' },
   GB: { country: 'United Kingdom', code: 'GB', currencyCode: 'GBP', currencySymbol: '£', amount: 29, originalAmount: 299, gateways: ['paypal', 'flutterwave'], defaultGateway: 'paypal' },
-  NG: { country: 'Nigeria', code: 'NG', currencyCode: 'NGN', currencySymbol: '₦', amount: 7900, originalAmount: 97000, gateways: ['paystack', 'flutterwave'], defaultGateway: 'paystack' },
+  NG: { country: 'Nigeria', code: 'NG', currencyCode: 'NGN', currencySymbol: '₦', amount: 7900, originalAmount: 25000, gateways: ['paystack', 'flutterwave'], defaultGateway: 'paystack' },
   GH: { country: 'Ghana', code: 'GH', currencyCode: 'GHS', currencySymbol: '₵', amount: 150, originalAmount: 1500, gateways: ['paystack', 'flutterwave'], defaultGateway: 'paystack' },
   KE: { country: 'Kenya', code: 'KE', currencyCode: 'KES', currencySymbol: 'KSh ', amount: 1970, originalAmount: 19700, gateways: ['flutterwave'], defaultGateway: 'flutterwave' },
   UG: { country: 'Uganda', code: 'UG', currencyCode: 'UGX', currencySymbol: 'UGX ', amount: 49900, originalAmount: 499000, gateways: ['flutterwave'], defaultGateway: 'flutterwave' },

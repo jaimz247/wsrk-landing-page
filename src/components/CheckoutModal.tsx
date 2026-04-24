@@ -622,7 +622,7 @@ export default function CheckoutModal({ isOpen, onClose, pricing, changeCountry,
                                 {selectedGateway === 'paystack' && <div className="w-2.5 h-2.5 rounded-full bg-[#25D366]" />}
                               </div>
                               <div className="w-10 h-10 bg-white border border-zinc-100 rounded-lg flex items-center justify-center p-1.5 shadow-sm">
-                                <img src="https://upload.wikimedia.org/wikipedia/commons/0/0b/Paystack_Logo.png" alt="Paystack" className="w-full h-full object-contain" />
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/0/0b/Paystack_Logo.png" alt="Paystack" loading="lazy" decoding="async" className="w-full h-full object-contain" />
                               </div>
                               <div className="flex flex-col">
                                 <span className="font-bold text-zinc-900">Paystack</span>
@@ -639,7 +639,7 @@ export default function CheckoutModal({ isOpen, onClose, pricing, changeCountry,
                                 {selectedGateway === 'flutterwave' && <div className="w-2.5 h-2.5 rounded-full bg-[#25D366]" />}
                               </div>
                               <div className="w-10 h-10 bg-white border border-zinc-100 rounded-lg flex items-center justify-center p-1.5 shadow-sm">
-                                <img src="https://upload.wikimedia.org/wikipedia/commons/8/8b/Flutterwave_Logo.png" alt="Flutterwave" className="w-full h-full object-contain" />
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/8/8b/Flutterwave_Logo.png" alt="Flutterwave" loading="lazy" decoding="async" className="w-full h-full object-contain" />
                               </div>
                               <div className="flex flex-col">
                                 <span className="font-bold text-zinc-900">Flutterwave</span>
@@ -656,7 +656,7 @@ export default function CheckoutModal({ isOpen, onClose, pricing, changeCountry,
                                 {selectedGateway === 'paypal' && <div className="w-2.5 h-2.5 rounded-full bg-[#25D366]" />}
                               </div>
                               <div className="w-10 h-10 bg-white border border-zinc-100 rounded-lg flex items-center justify-center p-1.5 shadow-sm">
-                                <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal" className="w-full h-full object-contain" />
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal" loading="lazy" decoding="async" className="w-full h-full object-contain" />
                               </div>
                               <div className="flex flex-col">
                                 <span className="font-bold text-zinc-900">PayPal</span>
