@@ -41,6 +41,15 @@ import CheckoutModal from './components/CheckoutModal';
 import { Link } from 'react-router-dom';
 import CookieConsent from './components/CookieConsent';
 import { useGeolocationPricing } from './hooks/useGeolocationPricing';
+import InteractiveChatDemo from './components/InteractiveChatDemo';
+import LostRevenueCalculator from './components/LostRevenueCalculator';
+import WorkflowDiagram from './components/WorkflowDiagram';
+import ConversionInsights from './components/ConversionInsights';
+import LeadCaptureWidget from './components/LeadCaptureWidget';
+import LeadCaptureInline from './components/LeadCaptureInline';
+
+import HeroAnimation from './components/HeroAnimation';
+import ComparisonTable from './components/ComparisonTable';
 
 // --- Components ---
 
@@ -57,11 +66,11 @@ const Button = ({
   href?: string;
   [key: string]: any;
 }) => {
-  const baseStyles = "inline-flex items-center justify-center px-8 py-4 rounded-xl font-bold transition-all duration-300 active:scale-95 text-center tracking-tight";
+  const baseStyles = "inline-flex items-center justify-center px-8 py-4 !transition-all !duration-500 active:scale-95 text-center tracking-tight relative overflow-hidden";
   const variants = {
-    primary: "bg-[#25D366] text-white hover:bg-[#128C7E] shadow-xl shadow-green-500/20 hover:shadow-green-500/40",
-    secondary: "bg-zinc-900 text-white hover:bg-zinc-800 shadow-xl shadow-zinc-900/10 hover:shadow-zinc-900/20",
-    outline: "border-2 border-zinc-200 text-zinc-900 hover:border-zinc-900 hover:bg-zinc-50"
+    primary: "cf-button-primary",
+    secondary: "cf-button-secondary",
+    outline: "border border-zinc-200 text-zinc-900 hover:border-zinc-300 hover:bg-white shadow-[0_4px_10px_rgba(0,0,0,0.02)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)] rounded-[20px] font-bold"
   };
 
   if (href) {
@@ -80,15 +89,21 @@ const Button = ({
 };
 
 const Section = ({ children, className = "", id = "", containerClassName = "" }: { children: React.ReactNode; className?: string; id?: string; containerClassName?: string }) => (
-  <section id={id} className={`py-20 md:py-32 px-6 ${className}`}>
-    <div className={`max-w-6xl mx-auto ${containerClassName}`}>
+  <section id={id} className={`cf-section overflow-hidden ${className}`}>
+    <motion.div 
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-50px" }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+      className={`max-w-6xl mx-auto relative ${containerClassName}`}
+    >
       {children}
-    </div>
+    </motion.div>
   </section>
 );
 
 const Badge = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
-  <span className={`inline-block px-4 py-1.5 rounded-full bg-green-50 text-[#128C7E] text-[11px] font-bold uppercase tracking-[0.1em] mb-6 border border-green-100/50 ${className}`}>
+  <span className={`cf-badge mb-8 ${className}`}>
     {children}
   </span>
 );
@@ -290,42 +305,30 @@ export default function App() {
             transition={{ duration: 0.6, ease: "easeOut" }}
           >
             <Badge>Powered by the Profit-Lock™ Method</Badge>
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-black tracking-tight text-zinc-900 mb-6 leading-tight">
-              Stop Losing Serious Buyers on WhatsApp —<br />
-              <span className="text-[#128C7E]">Turn Enquiries Into Payments With Proven Reply Scripts</span>
+            <h1 className="cf-heading text-5xl md:text-7xl lg:text-[5.5rem] mb-8">
+              Turn 'I'll Get Back To You' Into <span className="text-[#25D366]">'Payment Sent'</span><br />
+              <span className="cf-text-gradient-accent text-3xl md:text-5xl lg:text-5xl mt-4 block">Plug Your Sales Leaks and Close 4x More Deals on WhatsApp</span>
             </h1>
-            <p className="text-lg md:text-xl text-zinc-600 max-w-2xl mx-auto mb-10 leading-relaxed font-medium">
-              Built for Nigerian vendors and business owners who get messages but struggle to close sales.
+            <p className="text-xl md:text-2xl text-zinc-600 max-w-3xl mx-auto mb-4 leading-relaxed font-medium">
+              The exact copy-paste scripts and follow-up sequence proven to convert inquiries into paid customers in under 5 minutes.
             </p>
 
-            <div className="flex flex-col items-start text-left max-w-sm mx-auto mb-10 space-y-4">
-              <div className="flex items-start gap-3">
-                <div className="w-6 h-6 rounded-full bg-red-100 flex items-center justify-center shrink-0 mt-0.5">
-                  <X className="w-3.5 h-3.5 text-red-600" />
-                </div>
-                <p className="text-zinc-700 font-bold leading-tight">People ask "How much?" then disappear</p>
-              </div>
-              <div className="flex items-start gap-3">
-                <div className="w-6 h-6 rounded-full bg-red-100 flex items-center justify-center shrink-0 mt-0.5">
-                  <X className="w-3.5 h-3.5 text-red-600" />
-                </div>
-                <p className="text-zinc-700 font-bold leading-tight">Customers say "I'll get back to you" and ghost</p>
-              </div>
-              <div className="flex items-start gap-3">
-                <div className="w-6 h-6 rounded-full bg-red-100 flex items-center justify-center shrink-0 mt-0.5">
-                  <X className="w-3.5 h-3.5 text-red-600" />
-                </div>
-                <p className="text-zinc-700 font-bold leading-tight">You explain everything but they don't pay</p>
-              </div>
-            </div>
+            <HeroAnimation />
             
             <div className="flex flex-col items-center gap-6">
               <div className="flex flex-col items-center w-full max-w-xl">
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full">
-                  <Button onClick={handleCheckoutClick} className="w-full sm:flex-1 group text-lg py-5">
-                    Get Instant Access Now — {pricing.currencySymbol}{pricing.amount.toLocaleString()}
-                    <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                  <Button onClick={handleCheckoutClick} className="w-full sm:flex-1 group text-lg py-5 relative overflow-hidden">
+                    <span className="relative z-10 flex items-center justify-center">
+                      Get Instant Access — {pricing.currencySymbol}{pricing.amount.toLocaleString()}
+                      <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                    </span>
+                    <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform" />
                   </Button>
+                </div>
+                
+                <div className="mt-3 text-red-500 font-bold text-sm bg-red-50 px-4 py-1.5 rounded-full flex items-center gap-2 border border-red-100 shadow-sm animate-pulse">
+                  <Clock className="w-4 h-4" /> Price increases to {pricing.currencySymbol}{(pricing.amount * 2).toLocaleString()} soon
                 </div>
                 
                 {/* Checkout Reassurance Block */}
@@ -385,6 +388,7 @@ export default function App() {
                 Built for vendors, service providers, and online sellers
               </p>
             </div>
+            
           </motion.div>
         </div>
 
@@ -414,11 +418,33 @@ export default function App() {
         </div>
       </Section>
 
-      {/* Testimonials (Moved Up for CRO) */}
+      {/* Problem & Workflow Section */}
+      <Section className="bg-white relative border-b border-zinc-100 pb-20">
+        <WorkflowDiagram />
+      </Section>
+
+      {/* Lead Capture Section */}
+      <Section className="bg-zinc-50 border-b border-zinc-100 py-16">
+        <LeadCaptureInline />
+      </Section>
+
+      {/* Comparison Table */}
+      <Section className="bg-zinc-50 border-b border-zinc-100 pb-20">
+        <ComparisonTable />
+      </Section>
+
+      {/* Interactive Chat Demo Section */}
       <Section className="bg-zinc-50 border-b border-zinc-100">
+        <div className="max-w-4xl mx-auto">
+          <InteractiveChatDemo />
+        </div>
+      </Section>
+
+      {/* Social Proof / Testimonials */}
+      <Section className="bg-white border-b border-zinc-100">
         <div className="text-center mb-16">
-          <Badge>Social Proof</Badge>
-          <h2 className="text-4xl md:text-5xl font-black mb-6">What Sellers Are Saying</h2>
+          <Badge>Real Results</Badge>
+          <h2 className="cf-heading text-4xl md:text-5xl mb-6">What Sellers Are Saying</h2>
           <p className="text-xl text-zinc-600 font-bold">Real results from business owners using the Profit-Lock™ Method.</p>
         </div>
         
@@ -443,20 +469,20 @@ export default function App() {
               rating: 5
             }
           ].map((t, i) => (
-            <div key={i} className="p-10 rounded-[40px] bg-white border border-zinc-100 shadow-sm relative">
+            <div key={i} className="cf-card p-10 relative">
               <div className="flex gap-1 mb-6">
                 {[...Array(t.rating)].map((_, i) => (
-                  <Star key={i} className="w-4 h-4 text-yellow-400 fill-yellow-400" />
+                  <Star key={i} className="w-5 h-5 text-yellow-400 fill-yellow-400" />
                 ))}
               </div>
               <p className="text-lg text-zinc-700 font-medium leading-relaxed mb-8 italic">"{t.quote}"</p>
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-zinc-100 rounded-full flex items-center justify-center font-black text-zinc-400">
+                <div className="w-12 h-12 bg-gradient-to-br from-zinc-100 to-zinc-200 rounded-full flex items-center justify-center font-black text-zinc-500 shadow-inner">
                   {t.name[0]}
                 </div>
                 <div>
                   <p className="font-black text-zinc-900">{t.name}</p>
-                  <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest">{t.role}</p>
+                  <p className="text-[10px] font-bold text-[#128C7E] uppercase tracking-widest">{t.role}</p>
                 </div>
               </div>
             </div>
@@ -464,104 +490,28 @@ export default function App() {
         </div>
       </Section>
 
-      {/* Pain + Agitation Section */}
-      <Section className="bg-white relative border-b border-zinc-100">
-        <div className="max-w-4xl mx-auto text-center">
-          <Badge>The Real Problem</Badge>
-          <h2 className="text-3xl md:text-5xl font-black mb-8 leading-tight tracking-tight text-zinc-900">
-            You are not losing sales because your product is bad...
-            <br />
-            <br />
-            <span className="text-red-500">You are losing sales because your WhatsApp conversations are not designed to convert.</span>
-          </h2>
-          
-          <div className="mt-12 bg-zinc-50 rounded-3xl p-8 md:p-12 border border-zinc-200">
-            <h3 className="text-xl md:text-2xl font-bold mb-8 flex items-center justify-center gap-3">
-              <AlertCircle className="w-6 h-6 text-red-500" />
-              Do these scenarios sound familiar?
-            </h3>
-            
-            <div className="grid md:grid-cols-2 gap-6 text-left">
-              <div className="flex items-start gap-4">
-                <div className="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center shrink-0">
-                  <X className="w-4 h-4 text-red-600" />
-                </div>
-                <div>
-                  <p className="font-bold text-zinc-900 mb-1">Pricing and disappearing</p>
-                  <p className="text-zinc-600 text-sm">They ask "How much", you reply with the price, and they vanish into thin air.</p>
-                </div>
-              </div>
-              
-              <div className="flex items-start gap-4">
-                <div className="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center shrink-0">
-                  <X className="w-4 h-4 text-red-600" />
-                </div>
-                <div>
-                  <p className="font-bold text-zinc-900 mb-1">Endless chatting without payment</p>
-                  <p className="text-zinc-600 text-sm">You answer 20 questions, share pictures and videos, but no alert drops.</p>
-                </div>
-              </div>
-              
-              <div className="flex items-start gap-4">
-                <div className="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center shrink-0">
-                  <X className="w-4 h-4 text-red-600" />
-                </div>
-                <div>
-                  <p className="font-bold text-zinc-900 mb-1">Following up without response</p>
-                  <p className="text-zinc-600 text-sm">You check back in after 2 days, and they just blue-tick you or ignore it entirely.</p>
-                </div>
-              </div>
-              
-              <div className="flex items-start gap-4">
-                <div className="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center shrink-0">
-                  <X className="w-4 h-4 text-red-600" />
-                </div>
-                <div>
-                  <p className="font-bold text-zinc-900 mb-1">Being ignored after sending details</p>
-                  <p className="text-zinc-600 text-sm">You send your account details like they asked, and then... nothing.</p>
-                </div>
-              </div>
-            </div>
-            
-            <div className="mt-10 pt-8 border-t border-zinc-200">
-              <p className="text-zinc-500 font-medium italic text-center">
-                "Stop blaming the economy or thinking you need more traffic. You just need a better system to turn the chats you ALREADY have into alerts."
-              </p>
-            </div>
-          </div>
-          
-          <div className="flex flex-col items-center mt-12 gap-4">
-            <Button onClick={handleCheckoutClick} className="w-full sm:w-auto px-10 py-5 text-lg">
-              Start Closing More Sales Now
-              <ArrowRight className="ml-2 w-5 h-5" />
-            </Button>
-            {/* Checkout Reassurance Block */}
-            <div className="flex flex-wrap items-center justify-center gap-3 text-zinc-500 text-[10px] sm:text-xs font-bold uppercase tracking-widest">
-              <div className="flex items-center gap-1.5"><Lock className="w-3.5 h-3.5 text-[#25D366]" /> Secure checkout via Selar</div>
-              <div className="hidden sm:block text-zinc-300">•</div>
-              <div className="flex items-center gap-1.5"><Zap className="w-3.5 h-3.5 text-yellow-500" /> Instant access</div>
-            </div>
-          </div>
-        </div>
+      {/* Calculator Section */}
+      <Section className="bg-zinc-900 border-b border-zinc-800 p-0">
+         <LostRevenueCalculator />
       </Section>
 
-      {/* What You Get Section */}
+      {/* What You Get Section (Offer Visualization) */}
       <Section className="bg-zinc-50 relative" id="features">
         <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-16">
+          <div className="text-center mb-16 relative z-10">
             <Badge>What's Inside?</Badge>
-            <h2 className="text-3xl md:text-5xl font-black mb-6 leading-tight">
+            <h2 className="cf-heading text-4xl md:text-5xl mb-6">
               Everything You Need to <br />
-              <span className="text-[#128C7E]">Turn Chats Into Alerts</span>
+              <span className="cf-text-gradient-accent">Turn Chats Into Alerts</span>
             </h2>
             <p className="text-lg text-zinc-600 font-medium max-w-2xl mx-auto">
               Skip the guesswork. Here is exactly what you get inside the Rescue Kit portal as soon as you pay.
             </p>
           </div>
           
-          <div className="grid md:grid-cols-2 gap-6">
-            <div className="bg-white p-6 rounded-3xl border border-zinc-200 flex items-start gap-4 shadow-sm hover:shadow-md transition-shadow">
-              <div className="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center shrink-0">
+          <div className="grid md:grid-cols-2 gap-8 relative z-10">
+            <div className="cf-card p-8 flex items-start gap-4">
+              <div className="w-12 h-12 rounded-xl bg-[#25D366]/10 flex items-center justify-center shrink-0">
                 <Search className="w-6 h-6 text-[#128C7E]" />
               </div>
               <div>
@@ -570,8 +520,8 @@ export default function App() {
               </div>
             </div>
             
-            <div className="bg-white p-6 rounded-3xl border border-zinc-200 flex items-start gap-4 shadow-sm hover:shadow-md transition-shadow">
-              <div className="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center shrink-0">
+            <div className="cf-card p-8 flex items-start gap-4">
+              <div className="w-12 h-12 rounded-xl bg-[#25D366]/10 flex items-center justify-center shrink-0">
                 <Copy className="w-6 h-6 text-[#128C7E]" />
               </div>
               <div>
@@ -580,8 +530,8 @@ export default function App() {
               </div>
             </div>
             
-            <div className="bg-white p-6 rounded-3xl border border-zinc-200 flex items-start gap-4 shadow-sm hover:shadow-md transition-shadow">
-              <div className="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center shrink-0">
+            <div className="cf-card p-8 flex items-start gap-4">
+              <div className="w-12 h-12 rounded-xl bg-[#25D366]/10 flex items-center justify-center shrink-0">
                 <ShieldCheck className="w-6 h-6 text-[#128C7E]" />
               </div>
               <div>
@@ -590,8 +540,8 @@ export default function App() {
               </div>
             </div>
             
-            <div className="bg-white p-6 rounded-3xl border border-zinc-200 flex items-start gap-4 shadow-sm hover:shadow-md transition-shadow">
-              <div className="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center shrink-0">
+            <div className="cf-card p-8 flex items-start gap-4">
+              <div className="w-12 h-12 rounded-xl bg-[#25D366]/10 flex items-center justify-center shrink-0">
                 <Clock className="w-6 h-6 text-[#128C7E]" />
               </div>
               <div>
@@ -600,8 +550,8 @@ export default function App() {
               </div>
             </div>
             
-            <div className="bg-white p-6 rounded-3xl border border-zinc-200 flex items-start gap-4 shadow-sm hover:shadow-md transition-shadow">
-              <div className="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center shrink-0">
+            <div className="cf-card p-8 flex items-start gap-4">
+              <div className="w-12 h-12 rounded-xl bg-[#25D366]/10 flex items-center justify-center shrink-0">
                 <CreditCard className="w-6 h-6 text-[#128C7E]" />
               </div>
               <div>
@@ -610,7 +560,7 @@ export default function App() {
               </div>
             </div>
             
-            <div className="bg-white p-6 rounded-3xl border border-zinc-200 flex items-start gap-4 shadow-sm hover:shadow-md transition-shadow">
+            <div className="cf-card p-8 flex items-start gap-4">
               <div className="w-12 h-12 rounded-xl bg-zinc-900 flex items-center justify-center shrink-0">
                 <Smartphone className="w-6 h-6 text-white" />
               </div>
@@ -621,7 +571,7 @@ export default function App() {
             </div>
           </div>
           
-          <div className="mt-12 text-center">
+          <div className="mt-16 text-center relative z-10">
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-yellow-100 text-yellow-800 rounded-full text-sm font-bold border border-yellow-200">
               <Star className="w-4 h-4 fill-yellow-500 text-yellow-500" />
               Plus Bonus Templates Included
@@ -648,7 +598,7 @@ export default function App() {
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           <div>
             <Badge>The Format Advantage</Badge>
-            <h2 className="text-4xl md:text-5xl font-black mb-8 leading-tight">
+            <h2 className="cf-heading text-4xl md:text-5xl mb-8">
               This Is Not Just <br />
               Another PDF Bundle
             </h2>
@@ -660,8 +610,8 @@ export default function App() {
               <p className="font-bold text-zinc-900">Instead of giving you a folder of static files, the WhatsApp Sales Rescue Kit gives you a private portal where everything is already organized for action.</p>
             </div>
           </div>
-          <div className="grid grid-cols-1 gap-4">
-            <div className="p-8 rounded-3xl bg-white border border-zinc-200 shadow-sm">
+          <div className="grid grid-cols-1 gap-6">
+            <div className="cf-card p-8">
               <h3 className="text-lg font-black mb-6 text-zinc-400 uppercase tracking-widest">Typical PDF Bundle</h3>
               <ul className="space-y-4">
                 {["Scripts are buried in documents", "Setup feels slow & navigation is clumsy", "Mobile use is frustrating", "Implementation gets delayed"].map((item, i) => (
@@ -672,7 +622,7 @@ export default function App() {
                 ))}
               </ul>
             </div>
-            <div className="p-8 rounded-3xl bg-white border-2 border-[#25D366] shadow-xl shadow-green-500/5">
+            <div className="cf-card p-8 ring-2 ring-[#25D366] ring-offset-4 ring-offset-zinc-50 border-none shadow-[0_20px_40px_rgba(37,211,102,0.1)]">
               <h3 className="text-lg font-black mb-6 text-[#128C7E] uppercase tracking-widest">Rescue Kit Portal</h3>
               <ul className="space-y-4">
                 {["Scripts are searchable & copy-ready", "Setup is guided & progress is visible", "Works beautifully on mobile", "Taking action feels much easier"].map((item, i) => (
@@ -728,9 +678,9 @@ export default function App() {
           </div>
           <div className="order-1 lg:order-2">
             <Badge>The Heart of the System</Badge>
-            <h2 className="text-4xl md:text-6xl font-black mb-8 leading-tight">
+            <h2 className="cf-heading text-4xl md:text-5xl lg:text-6xl mb-8">
               The Script Bank <br />
-              <span className="text-[#128C7E]">Find. Tap. Copy.</span>
+              <span className="cf-text-gradient-accent">Find. Tap. Copy.</span>
             </h2>
             <p className="text-xl text-zinc-600 font-bold mb-8 leading-relaxed">
               Find the right script fast, tap once to copy it, and use it immediately in your chats.
@@ -758,6 +708,11 @@ export default function App() {
             </div>
           </div>
         </div>
+      </Section>
+
+      {/* Conversion Insights */}
+      <Section className="bg-white border-b border-zinc-100">
+        <ConversionInsights />
       </Section>
 
       {/* Guarantee Section */}
@@ -856,18 +811,18 @@ export default function App() {
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-20">
             <Badge>Qualification</Badge>
-            <h2 className="text-4xl md:text-5xl font-black mb-6 text-zinc-900">Is the Rescue Kit <br />Right for You?</h2>
+            <h2 className="cf-heading text-4xl md:text-5xl mb-6 text-zinc-900">Is the Rescue Kit <br />Right for You?</h2>
             <p className="text-xl text-zinc-600 font-bold">This was built for a specific type of seller.</p>
           </div>
           
-          <div className="grid sm:grid-cols-2 gap-6">
+          <div className="grid sm:grid-cols-2 gap-8">
             {[
               { title: "Product Vendors", desc: "If you sell physical goods and get 'how much' inquiries all day.", icon: <ShoppingBag className="w-5 h-5 text-zinc-400 group-hover:text-[#25D366] transition-colors" /> },
               { title: "Service Providers", desc: "If you handle bookings and client inquiries via WhatsApp.", icon: <Briefcase className="w-5 h-5 text-zinc-400 group-hover:text-[#25D366] transition-colors" /> },
               { title: "Digital Sellers", desc: "If you sell courses, ebooks, or access and need to close leads.", icon: <MonitorPlay className="w-5 h-5 text-zinc-400 group-hover:text-[#25D366] transition-colors" /> },
               { title: "Solo Operators", desc: "If you handle your own sales and need a faster, better system.", icon: <User className="w-5 h-5 text-zinc-400 group-hover:text-[#25D366] transition-colors" /> }
             ].map((item, i) => (
-              <div key={i} className="p-8 rounded-[32px] bg-zinc-50 border border-zinc-100 hover:bg-white hover:shadow-xl transition-all group">
+              <div key={i} className="cf-card p-8 group">
                 <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center mb-6 group-hover:bg-green-50 transition-colors shadow-sm">
                   {item.icon}
                 </div>
@@ -891,8 +846,7 @@ export default function App() {
             <p className="text-lg text-zinc-400 font-medium">Get instant access to everything in the portal today.</p>
           </div>
 
-          <div className="bg-white rounded-[32px] overflow-hidden shadow-2xl border-4 border-zinc-800">
-            <div className="p-8 md:p-12 text-zinc-900">
+          <div className="cf-card border-none ring-[4px] ring-black shadow-2xl p-8 md:p-12 text-zinc-900 mx-1 md:mx-0">
               <div className="grid md:grid-cols-2 gap-12">
                 <div className="space-y-5">
                   <h3 className="font-black text-2xl mb-6">Here's what you get:</h3>
@@ -943,7 +897,6 @@ export default function App() {
                   </div>
                 </div>
               </div>
-            </div>
           </div>
         </div>
       </Section>
@@ -953,9 +906,9 @@ export default function App() {
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16">
             <Badge>Post-Purchase Flow</Badge>
-            <h2 className="text-4xl md:text-5xl font-black mb-6 leading-tight">
+            <h2 className="cf-heading text-4xl md:text-5xl mb-6">
               What Happens <br />
-              <span className="text-[#128C7E]">After You Buy?</span>
+              <span className="cf-text-gradient-accent">After You Buy?</span>
             </h2>
             <p className="text-xl text-zinc-600 font-medium max-w-2xl mx-auto">
               We use a secure, passwordless magic link system. Getting access takes less than 60 seconds.
@@ -963,26 +916,26 @@ export default function App() {
           </div>
 
           {/* Animated Stats Bar */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16">
-            <div className="bg-white p-6 rounded-3xl border border-zinc-100 shadow-sm text-center">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16">
+            <div className="cf-card p-6 text-center">
               <div className="text-3xl font-black text-[#128C7E] mb-1">
                 <AnimatedCounter value={100} suffix="+" />
               </div>
               <div className="text-xs font-bold text-zinc-500 uppercase tracking-widest">Copy-Ready Scripts</div>
             </div>
-            <div className="bg-white p-6 rounded-3xl border border-zinc-100 shadow-sm text-center">
+            <div className="cf-card p-6 text-center">
               <div className="text-3xl font-black text-[#128C7E] mb-1">
                 <AnimatedCounter value={60} prefix="< " suffix="s" />
               </div>
               <div className="text-xs font-bold text-zinc-500 uppercase tracking-widest">Access Speed</div>
             </div>
-            <div className="bg-white p-6 rounded-3xl border border-zinc-100 shadow-sm text-center">
+            <div className="cf-card p-6 text-center">
               <div className="text-3xl font-black text-[#128C7E] mb-1">
                 <AnimatedCounter value={24} suffix="/7" />
               </div>
               <div className="text-xs font-bold text-zinc-500 uppercase tracking-widest">Lifetime Access</div>
             </div>
-            <div className="bg-white p-6 rounded-3xl border border-zinc-100 shadow-sm text-center">
+            <div className="cf-card p-6 text-center">
               <div className="text-3xl font-black text-[#128C7E] mb-1">
                 <AnimatedCounter value={100} suffix="%" />
               </div>
@@ -1040,7 +993,7 @@ export default function App() {
       {/* Magic Link Testimonial */}
       <Section className="py-12 bg-white">
         <div className="max-w-3xl mx-auto px-6">
-          <div className="bg-green-50 rounded-3xl p-8 md:p-10 relative">
+          <div className="cf-card p-8 md:p-10 relative bg-[#25D366]/5">
             <div className="absolute top-0 left-8 -translate-y-1/2 text-6xl text-[#25D366] opacity-20 font-serif">"</div>
             <div className="flex flex-col md:flex-row gap-6 items-center md:items-start">
               <div className="w-16 h-16 rounded-full bg-zinc-200 shrink-0 overflow-hidden border-2 border-white shadow-md">
@@ -1049,15 +1002,15 @@ export default function App() {
               <div>
                 <div className="flex gap-1 mb-3">
                   {[1, 2, 3, 4, 5].map((star) => (
-                    <Star key={star} className="w-4 h-4 fill-[#F5A623] text-[#F5A623]" />
+                    <Star key={star} className="w-5 h-5 fill-[#F5A623] text-[#F5A623]" />
                   ))}
                 </div>
                 <p className="text-lg md:text-xl font-medium text-zinc-800 leading-relaxed mb-4">
                   "I bought it, checked my email, clicked the magic link, and I was in. No passwords to create, no confusing logins to remember. The fastest and most seamless access I've ever experienced for a digital product."
                 </p>
                 <div>
-                  <p className="font-bold text-zinc-900">Sarah O.</p>
-                  <p className="text-sm text-zinc-500">E-commerce Store Owner</p>
+                  <p className="font-black text-zinc-900">Sarah O.</p>
+                  <p className="text-[10px] font-bold text-[#128C7E] uppercase tracking-widest">E-commerce Store Owner</p>
                 </div>
               </div>
             </div>
@@ -1070,9 +1023,9 @@ export default function App() {
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-20">
             <Badge>FAQ</Badge>
-            <h2 className="text-4xl font-black mb-6">Frequently Asked Questions</h2>
+            <h2 className="cf-heading text-4xl md:text-5xl mb-6">Frequently Asked Questions</h2>
           </div>
-          <div className="bg-white rounded-[32px] p-10 shadow-sm border border-zinc-100">
+          <div className="cf-card p-10 relative">
             {[
               { q: "Will this work for my business?", a: "Yes. Whether you sell physical products (clothes, devices, skincare) or services (consulting, graphic design), any business that relies on chatting to close deals will benefit immensely from these proven scripts." },
               { q: "Do I need any special experience or technical skills?", a: "Not at all. The portal is extremely easy to use. If you know how to copy text and paste it into WhatsApp, you have all the skills you need." },
@@ -1098,9 +1051,18 @@ export default function App() {
             You do not always need more leads first. Sometimes, you simply need a better system for how you handle the conversations you are already getting.
           </p>
           <div className="flex flex-col items-center gap-6">
-            <Button onClick={handleCheckoutClick} className="w-full sm:w-auto px-16 py-6 text-2xl">
-              Get the Rescue Kit Now
+            <Button onClick={handleCheckoutClick} className="w-full sm:w-auto px-16 py-6 text-2xl relative overflow-hidden group">
+              <span className="relative z-10 flex items-center justify-center">
+                Get the Rescue Kit Now
+                <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </span>
+              <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform" />
             </Button>
+            
+            <div className="mt-2 text-red-500 font-bold text-sm bg-red-50 px-4 py-1.5 rounded-full flex items-center justify-center gap-2 border border-red-100 shadow-sm animate-pulse w-full sm:w-auto">
+              <Clock className="w-4 h-4" /> Limited Time: Secure current price
+            </div>
+            
             <p className="text-zinc-500 font-bold text-sm -mt-2">
               Instant access delivered securely to your email.
             </p>
@@ -1147,6 +1109,9 @@ export default function App() {
       {/* Sticky Mobile CTA */}
       <div className="fixed bottom-0 left-0 right-0 p-4 z-40 sm:hidden">
         <div className="bg-white/95 backdrop-blur-xl p-4 rounded-[28px] border border-zinc-200 shadow-[0_-10px_40px_-5px_rgba(0,0,0,0.1)] flex flex-col items-center">
+          <div className="w-full flex items-center justify-center gap-1.5 mb-3 text-red-500 text-[10px] font-bold uppercase tracking-widest bg-red-50 rounded-full py-1">
+             <Clock className="w-3 h-3" /> price increases soon
+          </div>
           <Button onClick={handleCheckoutClick} className="w-full py-4 text-base shadow-lg shadow-[#25D366]/20">
             Get Instant Access — {pricing.currencySymbol}{pricing.amount.toLocaleString()}
           </Button>
@@ -1164,6 +1129,7 @@ export default function App() {
         allPricing={allPricing}
       />
       <CookieConsent />
+      <LeadCaptureWidget />
     </div>
   );
 }
