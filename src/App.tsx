@@ -33,7 +33,8 @@ import {
   Linkedin,
   Share2,
   CreditCard,
-  ArrowUp
+  ArrowUp,
+  MessageCircle
 } from 'lucide-react';
 import { motion, AnimatePresence, useInView, animate } from 'motion/react';
 import CheckoutModal from './components/CheckoutModal';
@@ -331,11 +332,19 @@ export default function App() {
                   <Clock className="w-4 h-4" /> Price increases to {pricing.currencySymbol}{(pricing.amount * 2).toLocaleString()} soon
                 </div>
                 
+                <a 
+                  href="https://wa.me/2348162186221" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="mt-4 text-sm font-bold text-zinc-600 border border-zinc-300 rounded-full py-2 px-6 hover:bg-zinc-100 transition-colors flex items-center justify-center gap-2 w-fit mx-auto"
+                >
+                  <MessageCircle className="w-4 h-4 text-[#25D366]" />
+                  Not sure yet? Chat with us on WhatsApp
+                </a>
+
                 {/* Checkout Reassurance Block */}
                 <div className="flex flex-col sm:flex-row items-center gap-4 mt-6 text-zinc-500 text-xs font-bold bg-zinc-50 px-6 py-3 rounded-2xl border border-zinc-100 justify-center flex-wrap">
-                  <div className="flex items-center gap-1.5"><Lock className="w-3.5 h-3.5 text-[#25D366]" /> Secure checkout via Selar</div>
-                  <div className="hidden sm:block text-zinc-300">•</div>
-                  <div className="flex items-center gap-1.5"><Zap className="w-3.5 h-3.5 text-yellow-500" /> Instant access after payment</div>
+                  <div className="flex items-center gap-1.5"><Lock className="w-3.5 h-3.5 text-[#25D366]" /> Secure checkout via Selar. Instant access after payment.</div>
                   <div className="hidden sm:block text-zinc-300">•</div>
                   <div className="flex items-center gap-1.5"><Smartphone className="w-3.5 h-3.5 text-blue-500" /> Works on mobile</div>
                 </div>
@@ -578,15 +587,25 @@ export default function App() {
             </div>
             
             <div className="mt-8 flex flex-col items-center gap-4">
-              <Button onClick={handleCheckoutClick} className="w-full sm:w-auto px-10 py-5 text-lg">
-                Unlock the Scripts Now
-                <ArrowRight className="ml-2 w-5 h-5" />
+              <Button onClick={handleCheckoutClick} className="w-full sm:w-auto px-10 py-5 text-lg relative overflow-hidden group">
+                <span className="relative z-10 flex items-center justify-center">
+                  Get Instant Access — {pricing.currencySymbol}{pricing.amount.toLocaleString()}
+                  <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </span>
+                <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform" />
               </Button>
+              <a 
+                href="https://wa.me/2348162186221" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-sm font-bold text-zinc-600 border border-zinc-300 rounded-full py-2 px-6 hover:bg-zinc-100 transition-colors flex items-center justify-center gap-2 w-fit mx-auto"
+              >
+                <MessageCircle className="w-4 h-4 text-[#25D366]" />
+                Not sure yet? Chat with us on WhatsApp
+              </a>
               {/* Checkout Reassurance Block */}
-              <div className="flex flex-wrap items-center justify-center gap-3 text-zinc-500 text-[10px] sm:text-xs font-bold uppercase tracking-widest">
-                <div className="flex items-center gap-1.5"><Lock className="w-3.5 h-3.5 text-[#25D366]" /> Secure checkout via Selar</div>
-                <div className="hidden sm:block text-zinc-300">•</div>
-                <div className="flex items-center gap-1.5"><Smartphone className="w-3.5 h-3.5 text-blue-500" /> No technical skills needed</div>
+              <div className="flex flex-wrap items-center justify-center gap-3 text-zinc-500 text-[10px] sm:text-xs font-bold uppercase tracking-widest mt-2">
+                <div className="flex items-center gap-1.5"><Lock className="w-3.5 h-3.5 text-[#25D366]" /> Secure checkout via Selar. Instant access after payment.</div>
               </div>
             </div>
           </div>
@@ -771,9 +790,24 @@ export default function App() {
               <p className="text-zinc-400 mb-8 max-w-sm">
                 No more guessing. The scripts are formatted exactly as you would type them—just copy, paste, and let them read naturally.
               </p>
-              <Button onClick={handleCheckoutClick} className="w-full sm:w-auto px-8 py-4">
-                Get the Scripts Now
+              <Button onClick={handleCheckoutClick} className="w-full sm:w-auto px-8 py-4 relative overflow-hidden group">
+                <span className="relative z-10 flex items-center justify-center">
+                  Get Instant Access — {pricing.currencySymbol}{pricing.amount.toLocaleString()}
+                </span>
+                <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform" />
               </Button>
+              <a 
+                href="https://wa.me/2348162186221" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="mt-4 text-sm font-bold text-zinc-400 border border-zinc-700 rounded-full py-2 px-6 hover:bg-zinc-800 transition-colors flex items-center justify-center gap-2 w-fit mx-auto lg:mx-0"
+              >
+                <MessageCircle className="w-4 h-4 text-[#25D366]" />
+                Not sure yet? Chat with us on WhatsApp
+              </a>
+              <div className="mt-4 text-[10px] font-bold text-zinc-500 flex items-center justify-center lg:justify-start gap-1 uppercase tracking-widest text-center lg:text-left">
+                 <Lock className="w-3 h-3 text-zinc-600" /> Secure checkout via Selar. Instant access after payment.
+              </div>
             </div>
             
             {/* Visual Chat Mockup */}
@@ -888,12 +922,22 @@ export default function App() {
                   <Button onClick={handleCheckoutClick} className="w-full text-lg py-5 mb-4 hover:scale-[1.02]">
                     Get Instant Access
                   </Button>
+                  
+                  <a 
+                    href="https://wa.me/2348162186221" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="mb-4 text-sm font-bold text-zinc-600 border border-zinc-300 rounded-full py-2 px-6 hover:bg-zinc-100 transition-colors flex items-center justify-center gap-2 w-fit mx-auto"
+                  >
+                    <MessageCircle className="w-4 h-4 text-[#25D366]" />
+                    Not sure yet? Chat with us on WhatsApp
+                  </a>
+
                   <p className="text-zinc-500 text-xs font-bold text-center">
-                    Instant access delivered securely to your email.
+                    Secure checkout via Selar. Instant access after payment.
                   </p>
                   <div className="flex flex-wrap items-center justify-center gap-2 mt-4 text-zinc-400 text-[10px] font-bold uppercase tracking-wider">
                     <div className="flex items-center gap-1"><Lock className="w-3 h-3" /> Secure checkout</div>
-                    <div className="flex items-center gap-1"><ShieldCheck className="w-3 h-3" /> Safe Payment via Selar</div>
                   </div>
                 </div>
               </div>
@@ -1036,6 +1080,9 @@ export default function App() {
               <FAQItem key={i} question={faq.q} answer={faq.a} />
             ))}
           </div>
+          <p className="mt-8 text-center text-sm font-medium text-zinc-500 max-w-2xl mx-auto italic">
+            Advanced users can later upgrade to an automated AI system that handles your WhatsApp chats and helps close sales for you.
+          </p>
         </div>
       </Section>
 
@@ -1053,18 +1100,28 @@ export default function App() {
           <div className="flex flex-col items-center gap-6">
             <Button onClick={handleCheckoutClick} className="w-full sm:w-auto px-16 py-6 text-2xl relative overflow-hidden group">
               <span className="relative z-10 flex items-center justify-center">
-                Get the Rescue Kit Now
+                Get Instant Access — {pricing.currencySymbol}{pricing.amount.toLocaleString()}
                 <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </span>
               <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform" />
             </Button>
             
+            <a 
+              href="https://wa.me/2348162186221" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-sm font-bold text-zinc-600 border border-zinc-300 rounded-full py-2 px-6 hover:bg-zinc-100 transition-colors flex items-center justify-center gap-2 w-full sm:w-auto"
+            >
+              <MessageCircle className="w-4 h-4 text-[#25D366]" />
+              Not sure yet? Chat with us on WhatsApp
+            </a>
+
             <div className="mt-2 text-red-500 font-bold text-sm bg-red-50 px-4 py-1.5 rounded-full flex items-center justify-center gap-2 border border-red-100 shadow-sm animate-pulse w-full sm:w-auto">
               <Clock className="w-4 h-4" /> Limited Time: Secure current price
             </div>
             
-            <p className="text-zinc-500 font-bold text-sm -mt-2">
-              Instant access delivered securely to your email.
+            <p className="text-zinc-500 font-bold text-sm -mt-2 text-center">
+              Secure checkout via Selar. Instant access after payment.
             </p>
             <p className="text-zinc-400 font-bold uppercase tracking-widest text-xs">
               Access the private portal and start improving today
@@ -1116,7 +1173,7 @@ export default function App() {
             Get Instant Access — {pricing.currencySymbol}{pricing.amount.toLocaleString()}
           </Button>
           <div className="flex items-center gap-1.5 mt-3 text-zinc-500 text-[10px] font-bold uppercase tracking-widest">
-             <Lock className="w-3 h-3 text-[#25D366]" /> Secure checkout via Selar
+             <Lock className="w-3 h-3 text-[#25D366]" /> Secure checkout. Instant access.
           </div>
         </div>
       </div>
