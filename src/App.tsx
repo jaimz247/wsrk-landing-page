@@ -333,7 +333,7 @@ export default function App() {
                 </div>
                 
                 <a 
-                  href="https://wa.me/2348162186221" 
+                  href="https://wa.me/2348145956772" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="mt-4 text-sm font-bold text-zinc-600 border border-zinc-300 rounded-full py-2 px-6 hover:bg-zinc-100 transition-colors flex items-center justify-center gap-2 w-fit mx-auto"
@@ -595,7 +595,7 @@ export default function App() {
                 <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform" />
               </Button>
               <a 
-                href="https://wa.me/2348162186221" 
+                href="https://wa.me/2348145956772" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="text-sm font-bold text-zinc-600 border border-zinc-300 rounded-full py-2 px-6 hover:bg-zinc-100 transition-colors flex items-center justify-center gap-2 w-fit mx-auto"
@@ -797,7 +797,7 @@ export default function App() {
                 <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform" />
               </Button>
               <a 
-                href="https://wa.me/2348162186221" 
+                href="https://wa.me/2348145956772" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="mt-4 text-sm font-bold text-zinc-400 border border-zinc-700 rounded-full py-2 px-6 hover:bg-zinc-800 transition-colors flex items-center justify-center gap-2 w-fit mx-auto lg:mx-0"
@@ -924,7 +924,7 @@ export default function App() {
                   </Button>
                   
                   <a 
-                    href="https://wa.me/2348162186221" 
+                    href="https://wa.me/2348145956772" 
                     target="_blank" 
                     rel="noopener noreferrer"
                     className="mb-4 text-sm font-bold text-zinc-600 border border-zinc-300 rounded-full py-2 px-6 hover:bg-zinc-100 transition-colors flex items-center justify-center gap-2 w-fit mx-auto"
@@ -1075,7 +1075,7 @@ export default function App() {
               { q: "Do I need any special experience or technical skills?", a: "Not at all. The portal is extremely easy to use. If you know how to copy text and paste it into WhatsApp, you have all the skills you need." },
               { q: "How do I access the portal after payment?", a: "After you checkout securely via Selar, you'll immediately receive an email with your Magic Link. Click it, and you're inside the portal. No passwords required." },
               { q: "Is this a long, boring course I have to watch?", a: "No! This is an action-oriented implementation toolkit. It consists of ready-to-use text scripts, quick setup trackers, and practical templates. It's built for you to use in minutes, not weeks." },
-              { q: "What if I have issues accessing it?", a: "You can reach out to our dedicated support via WhatsApp (+234 816 218 6221) or email anytime. We're here to help." }
+              { q: "What if I have issues accessing it?", a: "You can reach out to our dedicated support via WhatsApp (+234 814 595 6772) or email anytime. We're here to help." }
             ].map((faq, i) => (
               <FAQItem key={i} question={faq.q} answer={faq.a} />
             ))}
@@ -1107,7 +1107,7 @@ export default function App() {
             </Button>
             
             <a 
-              href="https://wa.me/2348162186221" 
+              href="https://wa.me/2348145956772" 
               target="_blank" 
               rel="noopener noreferrer"
               className="text-sm font-bold text-zinc-600 border border-zinc-300 rounded-full py-2 px-6 hover:bg-zinc-100 transition-colors flex items-center justify-center gap-2 w-full sm:w-auto"
@@ -1143,7 +1143,7 @@ export default function App() {
           <div className="flex flex-col sm:flex-row justify-center items-stretch sm:items-center gap-4 sm:gap-6 mb-10 text-zinc-600 font-medium">
              <div className="flex items-center justify-center gap-2 bg-zinc-50 sm:bg-transparent py-4 sm:py-0 rounded-xl sm:rounded-none border border-zinc-100 sm:border-none">
                 <MessageSquare className="w-5 h-5 sm:w-4 sm:h-4 text-[#25D366]" />
-                <span className="text-sm sm:text-base">Support via WhatsApp:</span> <a href="https://wa.me/2348162186221" className="text-zinc-900 font-bold hover:text-[#128C7E] transition-colors pl-1 py-1">+234 816 218 6221</a>
+                <span className="text-sm sm:text-base">Support via WhatsApp:</span> <a href="https://wa.me/2348145956772" className="text-zinc-900 font-bold hover:text-[#128C7E] transition-colors pl-1 py-1">+234 814 595 6772</a>
              </div>
              <div className="hidden sm:block text-zinc-300">•</div>
              <div className="flex items-center justify-center gap-2 bg-zinc-50 sm:bg-transparent py-4 sm:py-0 rounded-xl sm:rounded-none border border-zinc-100 sm:border-none">
