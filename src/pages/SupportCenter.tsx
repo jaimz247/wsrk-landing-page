@@ -4,12 +4,12 @@ import { Link } from 'react-router-dom';
 
 const faqs = [
   {
-    question: "How do I access the WhatsApp Sales Rescue Kit after purchase?",
+    question: "How do I access The Chat Sales Rescue Kit after purchase?",
     answer: "Immediately after your purchase is completed, you will receive an email with your secure login credentials and a link to the member portal. You can also click 'Member Login' at the bottom of our website."
   },
   {
     question: "Is this a subscription or a one-time payment?",
-    answer: "The WhatsApp Sales Rescue Kit is a one-time payment. There are no hidden fees or recurring subscriptions. You get lifetime access to the core materials and any future updates to the kit."
+    answer: "The Chat Sales Rescue Kit is a one-time payment. There are no hidden fees or recurring subscriptions. You get lifetime access to the core materials and any future updates to the kit."
   },
   {
     question: "Do I need any special software to use the templates?",
@@ -105,13 +105,13 @@ export default function SupportCenter() {
                   </div>
                 </a>
 
-                <a href="#" className="flex items-center gap-4 bg-[#25D366]/10 hover:bg-[#25D366]/20 transition-colors p-4 rounded-2xl group">
+                <a href="https://wa.me/2348145956772?text=Hi%2C%20I%20saw%20the%20Chat%20Sales%20Rescue%20Kit%20ad%20and%20I%20want%20the%20free%2060-second%20chat%20check" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 bg-[#25D366]/10 hover:bg-[#25D366]/20 transition-colors p-4 rounded-2xl group">
                   <div className="w-10 h-10 bg-[#25D366] rounded-full flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-green-500/20">
                     <MessageCircle className="w-5 h-5 text-white" />
                   </div>
                   <div>
                     <div className="text-xs font-bold text-[#25D366] uppercase tracking-wider mb-1">WhatsApp</div>
-                    <div className="font-medium text-sm text-green-50">+1 (555) 123-4567</div>
+                    <div className="font-medium text-sm text-green-50">+234 814 595 6772</div>
                   </div>
                 </a>
               </div>

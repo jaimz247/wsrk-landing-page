@@ -278,8 +278,8 @@ export default function App() {
               <ShieldCheck className="w-5 h-5 text-white" />
             </div>
             <div className="flex flex-col leading-none">
-              <span className="font-black text-sm sm:text-lg tracking-tight">WhatsApp Sales Rescue Kit</span>
-              <span className="text-[9px] font-bold text-zinc-400 uppercase tracking-widest mt-0.5">Profit-Lock™</span>
+              <span className="font-black text-sm sm:text-lg tracking-tight">The Chat Sales Rescue Kit</span>
+              <span className="text-[9px] font-bold text-zinc-400 uppercase tracking-widest mt-0.5">Profit-Lock</span>
             </div>
           </div>
           <div className="flex items-center gap-6">
@@ -305,7 +305,7 @@ export default function App() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: "easeOut" }}
           >
-            <Badge>Powered by the Profit-Lock™ Method</Badge>
+            <Badge>Powered by the Profit-Lock Method</Badge>
             <h1 className="cf-heading text-5xl md:text-7xl lg:text-[5.5rem] mb-8">
               Turn 'I'll Get Back To You' Into <span className="text-[#25D366]">'Payment Sent'</span><br />
               <span className="cf-text-gradient-accent text-3xl md:text-5xl lg:text-5xl mt-4 block">Plug Your Sales Leaks and Close 4x More Deals on WhatsApp</span>
@@ -333,7 +333,7 @@ export default function App() {
                 </div>
                 
                 <a 
-                  href="https://wa.me/2348145956772" 
+                  href="https://wa.me/2348145956772?text=Hi%2C%20I%20saw%20the%20Chat%20Sales%20Rescue%20Kit%20ad%20and%20I%20want%20the%20free%2060-second%20chat%20check" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="mt-4 text-sm font-bold text-zinc-600 border border-zinc-300 rounded-full py-2 px-6 hover:bg-zinc-100 transition-colors flex items-center justify-center gap-2 w-fit mx-auto"
@@ -364,14 +364,14 @@ export default function App() {
                     <Facebook className="w-4 h-4" />
                   </button>
                   <button 
-                    onClick={() => window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent('Stop losing buyers on WhatsApp. Check out the WhatsApp Sales Rescue Kit!')}`, '_blank')}
+                    onClick={() => window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent('Stop losing buyers on WhatsApp. Check out The Chat Sales Rescue Kit!')}`, '_blank')}
                     className="w-8 h-8 rounded-full bg-zinc-100 hover:bg-[#1DA1F2] hover:text-white text-zinc-500 flex items-center justify-center transition-colors"
                     aria-label="Share on Twitter"
                   >
                     <Twitter className="w-4 h-4" />
                   </button>
                   <button 
-                    onClick={() => window.open(`https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(window.location.href)}&title=${encodeURIComponent('WhatsApp Sales Rescue Kit')}`, '_blank')}
+                    onClick={() => window.open(`https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(window.location.href)}&title=${encodeURIComponent('The Chat Sales Rescue Kit')}`, '_blank')}
                     className="w-8 h-8 rounded-full bg-zinc-100 hover:bg-[#0A66C2] hover:text-white text-zinc-500 flex items-center justify-center transition-colors"
                     aria-label="Share on LinkedIn"
                   >
@@ -454,7 +454,7 @@ export default function App() {
         <div className="text-center mb-16">
           <Badge>Real Results</Badge>
           <h2 className="cf-heading text-4xl md:text-5xl mb-6">What Sellers Are Saying</h2>
-          <p className="text-xl text-zinc-600 font-bold">Real results from business owners using the Profit-Lock™ Method.</p>
+          <p className="text-xl text-zinc-600 font-bold">Real results from business owners using the Profit-Lock Method.</p>
         </div>
         
         <div className="grid md:grid-cols-3 gap-8">
@@ -595,7 +595,7 @@ export default function App() {
                 <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform" />
               </Button>
               <a 
-                href="https://wa.me/2348145956772" 
+                href="https://wa.me/2348145956772?text=Hi%2C%20I%20saw%20the%20Chat%20Sales%20Rescue%20Kit%20ad%20and%20I%20want%20the%20free%2060-second%20chat%20check" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="text-sm font-bold text-zinc-600 border border-zinc-300 rounded-full py-2 px-6 hover:bg-zinc-100 transition-colors flex items-center justify-center gap-2 w-fit mx-auto"
@@ -626,7 +626,7 @@ export default function App() {
             </p>
             <div className="space-y-6 text-zinc-600 leading-relaxed">
               <p>Most digital products are delivered in a way that creates friction from the start. You download a file. Unzip it. Open multiple PDFs. Search through pages. Copy text manually.</p>
-              <p className="font-bold text-zinc-900">Instead of giving you a folder of static files, the WhatsApp Sales Rescue Kit gives you a private portal where everything is already organized for action.</p>
+              <p className="font-bold text-zinc-900">Instead of giving you a folder of static files, The Chat Sales Rescue Kit gives you a private portal where everything is already organized for action.</p>
             </div>
           </div>
           <div className="grid grid-cols-1 gap-6">
@@ -744,10 +744,10 @@ export default function App() {
             </div>
             <h2 className="text-4xl md:text-5xl font-black mb-8 leading-tight">
               The 30-Day <br />
-              <span className="text-[#128C7E]">Profit-Lock™ Guarantee</span>
+              <span className="text-[#128C7E]">Profit-Lock Guarantee</span>
             </h2>
             <p className="text-xl text-zinc-600 font-medium max-w-2xl mx-auto mb-12 leading-relaxed">
-              We are so confident in the WhatsApp Sales Rescue Kit that we offer a full 30-day implementation guarantee. If you follow the 60-minute setup and use the scripts, and don't see an improvement in your chat conversions, we'll give you your money back. No questions asked.
+              We are so confident in The Chat Sales Rescue Kit that we offer a full 30-day implementation guarantee. If you follow the 60-minute setup and use the scripts, and don't see an improvement in your chat conversions, we'll give you your money back. No questions asked.
             </p>
             <div className="inline-flex items-center gap-3 px-6 py-3 bg-green-50 rounded-full border border-green-100">
               <CheckCircle2 className="w-5 h-5 text-[#128C7E]" />
@@ -797,7 +797,7 @@ export default function App() {
                 <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform" />
               </Button>
               <a 
-                href="https://wa.me/2348145956772" 
+                href="https://wa.me/2348145956772?text=Hi%2C%20I%20saw%20the%20Chat%20Sales%20Rescue%20Kit%20ad%20and%20I%20want%20the%20free%2060-second%20chat%20check" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="mt-4 text-sm font-bold text-zinc-400 border border-zinc-700 rounded-full py-2 px-6 hover:bg-zinc-800 transition-colors flex items-center justify-center gap-2 w-fit mx-auto lg:mx-0"
@@ -924,7 +924,7 @@ export default function App() {
                   </Button>
                   
                   <a 
-                    href="https://wa.me/2348145956772" 
+                    href="https://wa.me/2348145956772?text=Hi%2C%20I%20saw%20the%20Chat%20Sales%20Rescue%20Kit%20ad%20and%20I%20want%20the%20free%2060-second%20chat%20check" 
                     target="_blank" 
                     rel="noopener noreferrer"
                     className="mb-4 text-sm font-bold text-zinc-600 border border-zinc-300 rounded-full py-2 px-6 hover:bg-zinc-100 transition-colors flex items-center justify-center gap-2 w-fit mx-auto"
@@ -1107,7 +1107,7 @@ export default function App() {
             </Button>
             
             <a 
-              href="https://wa.me/2348145956772" 
+              href="https://wa.me/2348145956772?text=Hi%2C%20I%20saw%20the%20Chat%20Sales%20Rescue%20Kit%20ad%20and%20I%20want%20the%20free%2060-second%20chat%20check" 
               target="_blank" 
               rel="noopener noreferrer"
               className="text-sm font-bold text-zinc-600 border border-zinc-300 rounded-full py-2 px-6 hover:bg-zinc-100 transition-colors flex items-center justify-center gap-2 w-full sm:w-auto"
@@ -1158,23 +1158,34 @@ export default function App() {
             <Link to="/privacy-policy" className="py-4 px-6 sm:py-2 sm:px-0 hover:text-zinc-900 transition-colors text-center bg-zinc-50 sm:bg-transparent rounded-xl sm:rounded-none border border-zinc-100 sm:border-none block">Privacy Policy</Link>
           </div>
           <p className="text-zinc-400 font-bold text-xs pb-16 sm:pb-0">
-            © {new Date().getFullYear()} Profit-Lock™ Method. All rights reserved.
+            © {new Date().getFullYear()} Profit-Lock Method. All rights reserved.
           </p>
         </div>
       </footer>
 
-      {/* Sticky Mobile CTA */}
-      <div className="fixed bottom-0 left-0 right-0 p-4 z-40 sm:hidden">
-        <div className="bg-white/95 backdrop-blur-xl p-4 rounded-[28px] border border-zinc-200 shadow-[0_-10px_40px_-5px_rgba(0,0,0,0.1)] flex flex-col items-center">
-          <div className="w-full flex items-center justify-center gap-1.5 mb-3 text-red-500 text-[10px] font-bold uppercase tracking-widest bg-red-50 rounded-full py-1">
-             <Clock className="w-3 h-3" /> price increases soon
+      {/* Sticky Mobile CTA Bar */}
+      <div className="fixed bottom-0 left-0 right-0 p-3 z-40 sm:hidden">
+        <div className="bg-white/95 backdrop-blur-xl p-3.5 rounded-[24px] border border-zinc-200 shadow-[0_-10px_40px_-5px_rgba(0,0,0,0.12)] flex flex-col items-center">
+          <div className="w-full flex items-center justify-between px-1 mb-2 text-[10px] font-bold uppercase tracking-widest">
+            <span className="text-red-500 bg-red-50 px-2 py-0.5 rounded-full flex items-center gap-1 border border-red-100">
+              <Clock className="w-3 h-3" /> Price goes up soon
+            </span>
+            <span className="text-zinc-500 flex items-center gap-1">
+              <Lock className="w-3 h-3 text-[#25D366]" /> Instant Access
+            </span>
           </div>
-          <Button onClick={handleCheckoutClick} className="w-full py-4 text-base shadow-lg shadow-[#25D366]/20">
+          <Button onClick={handleCheckoutClick} className="w-full py-3.5 text-base shadow-lg shadow-[#25D366]/20">
             Get Instant Access — {pricing.currencySymbol}{pricing.amount.toLocaleString()}
           </Button>
-          <div className="flex items-center gap-1.5 mt-3 text-zinc-500 text-[10px] font-bold uppercase tracking-widest">
-             <Lock className="w-3 h-3 text-[#25D366]" /> Secure checkout. Instant access.
-          </div>
+          <a 
+            href="https://wa.me/2348145956772?text=Hi%2C%20I%20saw%20the%20Chat%20Sales%20Rescue%20Kit%20ad%20and%20I%20want%20the%20free%2060-second%20chat%20check" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="w-full mt-2 py-2 px-3 text-xs font-bold text-[#128C7E] bg-green-50 hover:bg-green-100 rounded-xl border border-green-200/80 flex items-center justify-center gap-2 transition-colors"
+          >
+            <MessageCircle className="w-4 h-4 text-[#25D366]" />
+            Have Questions? Chat on WhatsApp
+          </a>
         </div>
       </div>
 

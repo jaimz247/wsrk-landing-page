@@ -55,7 +55,7 @@ export default function PrivacyPolicy() {
               We will only use your personal data when the law allows us to. Most commonly, we will use your personal data in the following circumstances:
             </p>
             <ul className="list-disc pl-6 mb-8 text-zinc-600 space-y-2">
-              <li>Where we need to perform the contract we are about to enter into or have entered into with you (e.g., delivering the WhatsApp Sales Rescue Kit).</li>
+              <li>Where we need to perform the contract we are about to enter into or have entered into with you (e.g., delivering The Chat Sales Rescue Kit).</li>
               <li>Where it is necessary for our legitimate interests (or those of a third party) and your interests and fundamental rights do not override those interests.</li>
               <li>Where we need to comply with a legal obligation.</li>
             </ul>

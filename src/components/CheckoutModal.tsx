@@ -248,7 +248,7 @@ export default function CheckoutModal({ isOpen, onClose, pricing, changeCountry,
       phone_number: '',
     },
     customizations: {
-      title: 'WhatsApp Sales Rescue Kit',
+      title: 'The Chat Sales Rescue Kit',
       description: 'Lifetime Access to the Private Portal',
       logo: 'https://app.chatsalesrescue.com/logo.png',
     },
@@ -431,7 +431,7 @@ export default function CheckoutModal({ isOpen, onClose, pricing, changeCountry,
 
                 <div className="bg-zinc-50 rounded-xl p-5 mb-6 border border-zinc-200">
                   <div className="flex justify-between items-center mb-3">
-                    <span className="text-zinc-600 font-medium">WhatsApp Sales Rescue Kit</span>
+                    <span className="text-zinc-600 font-medium">The Chat Sales Rescue Kit</span>
                     <span className="font-bold text-zinc-900">{pricing.currencySymbol}{basePrice.toLocaleString()}</span>
                   </div>
                   {discount > 0 && (
@@ -690,7 +690,7 @@ export default function CheckoutModal({ isOpen, onClose, pricing, changeCountry,
                                         currency_code: paypalCurrency,
                                         value: paypalAmount.toFixed(2),
                                       },
-                                      description: "WhatsApp Sales Rescue Kit"
+                                      description: "The Chat Sales Rescue Kit"
                                     },
                                   ],
                                 });
@@ -771,7 +771,7 @@ export default function CheckoutModal({ isOpen, onClose, pricing, changeCountry,
             <div className="bg-zinc-50 p-6 border-t border-zinc-100 text-center">
               <p className="text-xs text-zinc-500 font-medium mb-3">Need help with your payment?</p>
               <a 
-                href="https://wa.me/2348000000000" 
+                href="https://wa.me/2348145956772?text=Hi%2C%20I%20saw%20the%20Chat%20Sales%20Rescue%20Kit%20ad%20and%20I%20want%20the%20free%2060-second%20chat%20check" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 text-sm font-bold text-[#25D366] hover:text-[#128C7E] transition-colors"

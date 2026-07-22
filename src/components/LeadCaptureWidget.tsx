@@ -6,7 +6,7 @@ import { GoogleGenAI } from "@google/genai";
 export default function LeadCaptureWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<{role: 'user' | 'model', text: string}[]>([
-    { role: 'model', text: "Hi there! I'm the AI Sales Assistant for the Profit-Lock™ Method. What questions do you have about the Sales Rescue Kit?" }
+    { role: 'model', text: "Hi there! I'm the AI Sales Assistant for the Profit-Lock Method. What questions do you have about the Sales Rescue Kit?" }
   ]);
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
@@ -28,7 +28,7 @@ export default function LeadCaptureWidget() {
         chatRef.current = ai.chats.create({
           model: "gemini-3-flash-preview",
           config: {
-            systemInstruction: `You are an AI sales assistant for the 'Profit-Lock™ Method / Sales Rescue Kit'. 
+            systemInstruction: `You are an AI sales assistant for the 'Profit-Lock Method / Sales Rescue Kit'. 
             This is a digital product tailored for Nigerian online business owners and vendors. 
             It helps them recover lost sales from WhatsApp chats, DMs, and ghosting.
             The kit includes a Script Bank, Lead Tracker, and Sales Leak Audit.
@@ -103,7 +103,7 @@ export default function LeadCaptureWidget() {
                     <ShieldCheck className="w-4 h-4" />
                  </div>
                  <div>
-                   <p className="font-bold text-sm leading-none">Profit-Lock™ Assistant</p>
+                   <p className="font-bold text-sm leading-none">Profit-Lock Assistant</p>
                    <p className="text-[10px] text-green-100 mt-1">AI Sales Representative</p>
                  </div>
                </div>
