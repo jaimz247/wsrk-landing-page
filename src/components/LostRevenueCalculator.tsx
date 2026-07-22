@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Calculator, ArrowRight, TrendingUp, AlertTriangle, Droplets, ShieldCheck, Flame } from 'lucide-react';
+import { Calculator, ArrowRight, TrendingUp, AlertTriangle, Droplets, ShieldCheck, Flame, Share2 } from 'lucide-react';
 import { motion, animate } from 'motion/react';
 
 const AnimatedNumber = ({ value, prefix = "", suffix = "" }: { value: number, prefix?: string, suffix?: string }) => {
@@ -220,6 +220,16 @@ export default function LostRevenueCalculator() {
                   <p className="text-base font-black text-red-400">₦{lostRevenueYearly.toLocaleString()}</p>
                 </div>
               </div>
+
+              <a 
+                href={`https://wa.me/?text=${encodeURIComponent(`I just calculated my WhatsApp sales leakage! I'm losing about ₦${lostRevenueWeekly.toLocaleString()}/week (₦${lostRevenueMonthly.toLocaleString()}/month) to ghosted chats and 'How much?' inquiries. Checking out The Chat Sales Rescue Kit: ${window.location.origin}`)}`}
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="mt-5 w-full py-2.5 px-4 bg-[#25D366]/15 hover:bg-[#25D366]/25 text-[#25D366] font-bold text-xs sm:text-sm rounded-xl border border-[#25D366]/40 flex items-center justify-center gap-2 transition-colors group"
+              >
+                <Share2 className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                Share Results on WhatsApp
+              </a>
             </div>
           </motion.div>
         </div>

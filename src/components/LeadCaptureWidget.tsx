@@ -112,7 +112,7 @@ export default function LeadCaptureWidget() {
                </button>
              </div>
 
-             <div className="p-4 bg-[url('https://www.transparenttextures.com/patterns/whatsapp-pattern.png')] bg-zinc-50 flex-1 overflow-y-auto flex flex-col gap-4">
+             <div className="p-4 bg-zinc-50 flex-1 overflow-y-auto flex flex-col gap-4">
                 {messages.map((msg, index) => (
                    <motion.div 
                     key={index}

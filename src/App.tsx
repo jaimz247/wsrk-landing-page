@@ -36,21 +36,23 @@ import {
   ArrowUp,
   MessageCircle
 } from 'lucide-react';
-import { motion, AnimatePresence, useInView, animate } from 'motion/react';
-import CheckoutModal from './components/CheckoutModal';
+import { motion, AnimatePresence, useInView, animate, useScroll, useSpring } from 'motion/react';
 
 import { Link } from 'react-router-dom';
 import CookieConsent from './components/CookieConsent';
 import { useGeolocationPricing } from './hooks/useGeolocationPricing';
-import InteractiveChatDemo from './components/InteractiveChatDemo';
-import LostRevenueCalculator from './components/LostRevenueCalculator';
-import WorkflowDiagram from './components/WorkflowDiagram';
-import ConversionInsights from './components/ConversionInsights';
-import LeadCaptureWidget from './components/LeadCaptureWidget';
 import LeadCaptureInline from './components/LeadCaptureInline';
 
 import HeroAnimation from './components/HeroAnimation';
 import ComparisonTable from './components/ComparisonTable';
+
+// Lazy loaded components for code-splitting and faster initial page load
+const CheckoutModal = React.lazy(() => import('./components/CheckoutModal'));
+const InteractiveChatDemo = React.lazy(() => import('./components/InteractiveChatDemo'));
+const LostRevenueCalculator = React.lazy(() => import('./components/LostRevenueCalculator'));
+const WorkflowDiagram = React.lazy(() => import('./components/WorkflowDiagram'));
+const ConversionInsights = React.lazy(() => import('./components/ConversionInsights'));
+const LeadCaptureWidget = React.lazy(() => import('./components/LeadCaptureWidget'));
 
 // --- Components ---
 
@@ -239,8 +241,20 @@ export default function App() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const { scrollYProgress } = useScroll();
+  const scaleX = useSpring(scrollYProgress, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001
+  });
+
   return (
     <div className="min-h-screen bg-white text-zinc-900 font-sans selection:bg-green-100 selection:text-green-900 antialiased">
+      {/* Scroll Progress Bar */}
+      <motion.div 
+        className="fixed top-0 left-0 right-0 h-1 bg-[#25D366] z-[100] origin-left pointer-events-none shadow-[0_0_8px_#25D366]"
+        style={{ scaleX }}
+      />
       
       {/* Scroll to Top Button */}
       <AnimatePresence>
@@ -429,7 +443,9 @@ export default function App() {
 
       {/* Problem & Workflow Section */}
       <Section className="bg-white relative border-b border-zinc-100 pb-20">
-        <WorkflowDiagram />
+        <React.Suspense fallback={<div className="py-12 text-center text-xs font-bold text-zinc-400">Loading workflow...</div>}>
+          <WorkflowDiagram />
+        </React.Suspense>
       </Section>
 
       {/* Lead Capture Section */}
@@ -445,7 +461,9 @@ export default function App() {
       {/* Interactive Chat Demo Section */}
       <Section className="bg-zinc-50 border-b border-zinc-100">
         <div className="max-w-4xl mx-auto">
-          <InteractiveChatDemo />
+          <React.Suspense fallback={<div className="py-12 text-center text-xs font-bold text-zinc-400">Loading chat demo...</div>}>
+            <InteractiveChatDemo />
+          </React.Suspense>
         </div>
       </Section>
 
@@ -501,7 +519,9 @@ export default function App() {
 
       {/* Calculator Section */}
       <Section className="bg-zinc-900 border-b border-zinc-800 p-0">
-         <LostRevenueCalculator />
+        <React.Suspense fallback={<div className="py-12 text-center text-xs font-bold text-zinc-400">Loading calculator...</div>}>
+          <LostRevenueCalculator />
+        </React.Suspense>
       </Section>
 
       {/* What You Get Section (Offer Visualization) */}
@@ -731,7 +751,9 @@ export default function App() {
 
       {/* Conversion Insights */}
       <Section className="bg-white border-b border-zinc-100">
-        <ConversionInsights />
+        <React.Suspense fallback={<div className="py-12 text-center text-xs font-bold text-zinc-400">Loading insights...</div>}>
+          <ConversionInsights />
+        </React.Suspense>
       </Section>
 
       {/* Guarantee Section */}
@@ -870,9 +892,7 @@ export default function App() {
 
       {/* Product Stack / Pricing */}
       <Section id="pricing" className="bg-zinc-900 text-white rounded-[40px] mx-6 my-12 shadow-2xl relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-full opacity-[0.03] pointer-events-none">
-          <div className="w-full h-full bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]" />
-        </div>
+        <div className="absolute top-0 left-0 w-full h-full opacity-[0.05] pointer-events-none bg-[radial-gradient(#25D366_1px,transparent_1px)] [background-size:16px_16px]" />
         <div className="max-w-4xl mx-auto relative z-10">
           <div className="text-center mb-12">
             <Badge className="bg-white/10 text-white border-white/20">Pricing</Badge>
@@ -1040,8 +1060,8 @@ export default function App() {
           <div className="cf-card p-8 md:p-10 relative bg-[#25D366]/5">
             <div className="absolute top-0 left-8 -translate-y-1/2 text-6xl text-[#25D366] opacity-20 font-serif">"</div>
             <div className="flex flex-col md:flex-row gap-6 items-center md:items-start">
-              <div className="w-16 h-16 rounded-full bg-zinc-200 shrink-0 overflow-hidden border-2 border-white shadow-md">
-                <img src="https://picsum.photos/seed/sarah/100/100" alt="Customer" loading="lazy" decoding="async" className="w-full h-full object-cover" />
+              <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-[#128C7E] to-[#25D366] shrink-0 border-2 border-white shadow-md flex items-center justify-center text-white font-extrabold text-xl">
+                S
               </div>
               <div>
                 <div className="flex gap-1 mb-3">
@@ -1189,15 +1209,19 @@ export default function App() {
         </div>
       </div>
 
-      <CheckoutModal 
-        isOpen={isCheckoutOpen} 
-        onClose={() => setIsCheckoutOpen(false)} 
-        pricing={pricing}
-        changeCountry={changeCountry}
-        allPricing={allPricing}
-      />
+      <React.Suspense fallback={null}>
+        <CheckoutModal 
+          isOpen={isCheckoutOpen} 
+          onClose={() => setIsCheckoutOpen(false)} 
+          pricing={pricing}
+          changeCountry={changeCountry}
+          allPricing={allPricing}
+        />
+      </React.Suspense>
       <CookieConsent />
-      <LeadCaptureWidget />
+      <React.Suspense fallback={null}>
+        <LeadCaptureWidget />
+      </React.Suspense>
     </div>
   );
 }
