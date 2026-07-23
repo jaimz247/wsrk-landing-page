@@ -39,12 +39,8 @@ import {
 import { motion, AnimatePresence, useInView, animate, useScroll, useSpring } from 'motion/react';
 
 import { Link } from 'react-router-dom';
-import CookieConsent from './components/CookieConsent';
 import { useGeolocationPricing } from './hooks/useGeolocationPricing';
-import LeadCaptureInline from './components/LeadCaptureInline';
-
 import HeroAnimation from './components/HeroAnimation';
-import ComparisonTable from './components/ComparisonTable';
 
 // Lazy loaded components for code-splitting and faster initial page load
 const CheckoutModal = React.lazy(() => import('./components/CheckoutModal'));
@@ -53,6 +49,9 @@ const LostRevenueCalculator = React.lazy(() => import('./components/LostRevenueC
 const WorkflowDiagram = React.lazy(() => import('./components/WorkflowDiagram'));
 const ConversionInsights = React.lazy(() => import('./components/ConversionInsights'));
 const LeadCaptureWidget = React.lazy(() => import('./components/LeadCaptureWidget'));
+const LeadCaptureInline = React.lazy(() => import('./components/LeadCaptureInline'));
+const ComparisonTable = React.lazy(() => import('./components/ComparisonTable'));
+const CookieConsent = React.lazy(() => import('./components/CookieConsent'));
 
 // --- Components ---
 
@@ -409,12 +408,16 @@ export default function App() {
 
       {/* Lead Capture Section */}
       <Section className="bg-zinc-50 border-b border-zinc-100 py-16">
-        <LeadCaptureInline />
+        <React.Suspense fallback={null}>
+          <LeadCaptureInline />
+        </React.Suspense>
       </Section>
 
       {/* Comparison Table */}
       <Section className="bg-zinc-50 border-b border-zinc-100 pb-20">
-        <ComparisonTable />
+        <React.Suspense fallback={null}>
+          <ComparisonTable />
+        </React.Suspense>
       </Section>
 
       {/* Interactive Chat Demo Section */}
@@ -1179,7 +1182,9 @@ export default function App() {
           allPricing={allPricing}
         />
       </React.Suspense>
-      <CookieConsent />
+      <React.Suspense fallback={null}>
+        <CookieConsent />
+      </React.Suspense>
       <React.Suspense fallback={null}>
         <LeadCaptureWidget />
       </React.Suspense>

@@ -11,6 +11,12 @@ async function startServer() {
     res.json({ status: "ok" });
   });
 
+  // Serve robots.txt directly as text/plain
+  app.get("/robots.txt", (_req, res) => {
+    res.type("text/plain");
+    res.send("User-agent: *\nAllow: /\n\nSitemap: https://app.chatsalesrescue.com/sitemap.xml\n");
+  });
+
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({
       server: { middlewareMode: true },
