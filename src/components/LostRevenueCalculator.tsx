@@ -121,11 +121,12 @@ export default function LostRevenueCalculator() {
         <div className="space-y-6 relative z-10">
           {/* Slider 1 */}
           <div className="bg-zinc-800/50 p-5 sm:p-6 rounded-2xl border border-zinc-700/50">
-            <label className="flex justify-between items-center text-sm font-bold text-zinc-300 mb-3">
+            <label htmlFor="weekly-inquiries-range" className="flex justify-between items-center text-sm font-bold text-zinc-300 mb-3">
               <span>Weekly WhatsApp Inquiries</span>
               <span className="text-white text-lg font-black bg-zinc-700 px-3 py-1 rounded-lg">{inquiries}</span>
             </label>
             <input 
+              id="weekly-inquiries-range"
               type="range" 
               min="10" 
               max="500" 
@@ -137,11 +138,12 @@ export default function LostRevenueCalculator() {
 
           {/* Slider 2 */}
           <div className="bg-zinc-800/50 p-5 sm:p-6 rounded-2xl border border-zinc-700/50">
-            <label className="flex justify-between items-center text-sm font-bold text-zinc-300 mb-3">
+            <label htmlFor="conversion-rate-range" className="flex justify-between items-center text-sm font-bold text-zinc-300 mb-3">
               <span>Current Conversion Rate</span>
               <span className="text-white text-lg font-black bg-zinc-700 px-3 py-1 rounded-lg">{conversionRate}%</span>
             </label>
             <input 
+              id="conversion-rate-range"
               type="range" 
               min="1" 
               max="50" 
@@ -153,12 +155,13 @@ export default function LostRevenueCalculator() {
 
           {/* Input 3 */}
           <div className="bg-zinc-800/50 p-5 sm:p-6 rounded-2xl border border-zinc-700/50">
-            <label className="flex justify-between items-center text-sm font-bold text-zinc-300 mb-3">
+            <label htmlFor="aov-number-input" className="flex justify-between items-center text-sm font-bold text-zinc-300 mb-3">
               <span>Average Order Value (₦)</span>
             </label>
             <div className="relative">
               <span className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 font-bold">₦</span>
               <input 
+                id="aov-number-input"
                 type="number"
                 value={aov}
                 onChange={(e) => setAov(Number(e.target.value))}

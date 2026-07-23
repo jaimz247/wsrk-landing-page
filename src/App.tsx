@@ -142,45 +142,6 @@ const FAQItem = ({ question, answer }: { question: string; answer: string; key?:
   );
 };
 
-const CountdownTimer = () => {
-  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-
-  useEffect(() => {
-    // 14 days in milliseconds
-    const cycleDuration = 14 * 24 * 60 * 60 * 1000;
-    // An arbitrary fixed epoch in the past to ensure consistent cycles for all users
-    const epoch = new Date('2024-01-01T00:00:00Z').getTime();
-
-    const interval = setInterval(() => {
-      const now = new Date().getTime();
-      const timeSinceEpoch = now - epoch;
-      const timeIntoCurrentCycle = timeSinceEpoch % cycleDuration;
-      const distance = cycleDuration - timeIntoCurrentCycle;
-
-      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-      setTimeLeft({ days, hours, minutes, seconds });
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  return (
-    <div className="flex items-center gap-1.5 font-mono bg-white/20 px-2.5 py-1 rounded-md text-white text-xs tracking-wider">
-      <div className="flex flex-col items-center leading-none"><span className="font-bold text-sm">{String(timeLeft.days).padStart(2, '0')}</span><span className="text-[8px] uppercase opacity-70">days</span></div>
-      <span className="font-bold self-start mt-0.5">:</span>
-      <div className="flex flex-col items-center leading-none"><span className="font-bold text-sm">{String(timeLeft.hours).padStart(2, '0')}</span><span className="text-[8px] uppercase opacity-70">hrs</span></div>
-      <span className="font-bold self-start mt-0.5">:</span>
-      <div className="flex flex-col items-center leading-none"><span className="font-bold text-sm">{String(timeLeft.minutes).padStart(2, '0')}</span><span className="text-[8px] uppercase opacity-70">min</span></div>
-      <span className="font-bold self-start mt-0.5">:</span>
-      <div className="flex flex-col items-center leading-none"><span className="font-bold text-sm">{String(timeLeft.seconds).padStart(2, '0')}</span><span className="text-[8px] uppercase opacity-70">sec</span></div>
-    </div>
-  );
-};
-
 const AnimatedCounter = ({ value, suffix = "", prefix = "" }: { value: number, suffix?: string, prefix?: string }) => {
   const nodeRef = React.useRef<HTMLSpanElement>(null);
   const inView = useInView(nodeRef, { once: true, margin: "-50px" });
@@ -272,16 +233,15 @@ export default function App() {
         )}
       </AnimatePresence>
 
-      {/* Top Urgency Banner */}
+      {/* Top Value Banner */}
       <div className="bg-zinc-900 text-white text-center py-2.5 px-4 text-xs sm:text-sm font-bold flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 relative z-[60]">
         <div className="flex items-center gap-2">
           <span className="flex h-2 w-2 relative">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
             <span className="relative inline-flex rounded-full h-2 w-2 bg-[#25D366]"></span>
           </span>
-          <span>Get lifetime access for {pricing.currencySymbol}{pricing.amount.toLocaleString()} before the price increases to {pricing.currencySymbol}{pricing.originalAmount.toLocaleString()}.</span>
+          <span>Lifetime access. One payment. {pricing.currencySymbol}{pricing.amount.toLocaleString()}.</span>
         </div>
-        <CountdownTimer />
       </div>
 
       {/* Navigation */}
@@ -293,21 +253,23 @@ export default function App() {
             </div>
             <div className="flex flex-col leading-none">
               <span className="font-black text-sm sm:text-lg tracking-tight">The Chat Sales Rescue Kit</span>
-              <span className="text-[9px] font-bold text-zinc-400 uppercase tracking-widest mt-0.5">Profit-Lock</span>
+              <span className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest mt-0.5">Profit-Lock</span>
             </div>
           </div>
           <div className="flex items-center gap-6">
-            <a href="#features" className="text-sm font-bold text-zinc-500 hover:text-zinc-900 transition-colors hidden sm:block">What's Inside</a>
-            <a href="#pricing" className="text-sm font-bold text-zinc-500 hover:text-zinc-900 transition-colors hidden sm:block">Pricing</a>
-            <a href="https://app.chatsalesrescue.com/access" className="text-sm font-bold text-zinc-500 hover:text-zinc-900 transition-colors hidden sm:block">Member Login</a>
-            <Button onClick={handleCheckoutClick} variant="secondary" className="px-5 py-2.5 text-sm md:px-7 md:py-3.5 md:text-base">
+            <a href="#features" className="text-sm font-bold text-zinc-600 hover:text-zinc-900 transition-colors hidden sm:block">What's Inside</a>
+            <a href="#pricing" className="text-sm font-bold text-zinc-600 hover:text-zinc-900 transition-colors hidden sm:block">Pricing</a>
+            <a href="https://app.chatsalesrescue.com/access" className="text-sm font-bold text-zinc-600 hover:text-zinc-900 transition-colors hidden sm:block">Member Login</a>
+            <Button onClick={handleCheckoutClick} aria-label={`Get instant access for ${pricing.currencySymbol}${pricing.amount.toLocaleString()}`} variant="secondary" className="px-5 py-2.5 text-sm md:px-7 md:py-3.5 md:text-base">
               Get Access
             </Button>
           </div>
         </div>
       </nav>
 
-      {/* Hero Section */}
+      {/* Main Content Landmark */}
+      <main id="main-content">
+        {/* Hero Section */}
       <Section className="pt-32 pb-20 md:pt-40 md:pb-32 relative overflow-hidden">
         {/* Background Accents */}
         <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-[800px] h-[800px] bg-green-50 rounded-full blur-[120px] opacity-40 -z-10" />
@@ -333,7 +295,7 @@ export default function App() {
             <div className="flex flex-col items-center gap-6">
               <div className="flex flex-col items-center w-full max-w-xl">
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full">
-                  <Button onClick={handleCheckoutClick} className="w-full sm:flex-1 group text-lg py-5 relative overflow-hidden">
+                  <Button onClick={handleCheckoutClick} aria-label={`Get instant access for ${pricing.currencySymbol}${pricing.amount.toLocaleString()}`} className="w-full sm:flex-1 group text-lg py-5 relative overflow-hidden">
                     <span className="relative z-10 flex items-center justify-center">
                       Get Instant Access — {pricing.currencySymbol}{pricing.amount.toLocaleString()}
                       <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -342,14 +304,11 @@ export default function App() {
                   </Button>
                 </div>
                 
-                <div className="mt-3 text-red-500 font-bold text-sm bg-red-50 px-4 py-1.5 rounded-full flex items-center gap-2 border border-red-100 shadow-sm animate-pulse">
-                  <Clock className="w-4 h-4" /> Price increases to {pricing.currencySymbol}{(pricing.amount * 2).toLocaleString()} soon
-                </div>
-                
                 <a 
                   href="https://wa.me/2348145956772?text=Hi%2C%20I%20saw%20the%20Chat%20Sales%20Rescue%20Kit%20ad%20and%20I%20want%20the%20free%2060-second%20chat%20check" 
                   target="_blank" 
                   rel="noopener noreferrer"
+                  aria-label="Chat with us on WhatsApp"
                   className="mt-4 text-sm font-bold text-zinc-600 border border-zinc-300 rounded-full py-2 px-6 hover:bg-zinc-100 transition-colors flex items-center justify-center gap-2 w-fit mx-auto"
                 >
                   <MessageCircle className="w-4 h-4 text-[#25D366]" />
@@ -607,7 +566,7 @@ export default function App() {
             </div>
             
             <div className="mt-8 flex flex-col items-center gap-4">
-              <Button onClick={handleCheckoutClick} className="w-full sm:w-auto px-10 py-5 text-lg relative overflow-hidden group">
+              <Button onClick={handleCheckoutClick} aria-label={`Get instant access for ${pricing.currencySymbol}${pricing.amount.toLocaleString()}`} className="w-full sm:w-auto px-10 py-5 text-lg relative overflow-hidden group">
                 <span className="relative z-10 flex items-center justify-center">
                   Get Instant Access — {pricing.currencySymbol}{pricing.amount.toLocaleString()}
                   <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -618,6 +577,7 @@ export default function App() {
                 href="https://wa.me/2348145956772?text=Hi%2C%20I%20saw%20the%20Chat%20Sales%20Rescue%20Kit%20ad%20and%20I%20want%20the%20free%2060-second%20chat%20check" 
                 target="_blank" 
                 rel="noopener noreferrer"
+                aria-label="Chat with us on WhatsApp"
                 className="text-sm font-bold text-zinc-600 border border-zinc-300 rounded-full py-2 px-6 hover:bg-zinc-100 transition-colors flex items-center justify-center gap-2 w-fit mx-auto"
               >
                 <MessageCircle className="w-4 h-4 text-[#25D366]" />
@@ -812,7 +772,7 @@ export default function App() {
               <p className="text-zinc-400 mb-8 max-w-sm">
                 No more guessing. The scripts are formatted exactly as you would type them—just copy, paste, and let them read naturally.
               </p>
-              <Button onClick={handleCheckoutClick} className="w-full sm:w-auto px-8 py-4 relative overflow-hidden group">
+              <Button onClick={handleCheckoutClick} aria-label={`Get instant access for ${pricing.currencySymbol}${pricing.amount.toLocaleString()}`} className="w-full sm:w-auto px-8 py-4 relative overflow-hidden group">
                 <span className="relative z-10 flex items-center justify-center">
                   Get Instant Access — {pricing.currencySymbol}{pricing.amount.toLocaleString()}
                 </span>
@@ -822,6 +782,7 @@ export default function App() {
                 href="https://wa.me/2348145956772?text=Hi%2C%20I%20saw%20the%20Chat%20Sales%20Rescue%20Kit%20ad%20and%20I%20want%20the%20free%2060-second%20chat%20check" 
                 target="_blank" 
                 rel="noopener noreferrer"
+                aria-label="Chat with us on WhatsApp"
                 className="mt-4 text-sm font-bold text-zinc-400 border border-zinc-700 rounded-full py-2 px-6 hover:bg-zinc-800 transition-colors flex items-center justify-center gap-2 w-fit mx-auto lg:mx-0"
               >
                 <MessageCircle className="w-4 h-4 text-[#25D366]" />
@@ -922,7 +883,7 @@ export default function App() {
                 </div>
                 <div className="flex flex-col justify-center text-center bg-zinc-50 p-8 rounded-3xl border border-zinc-200 relative">
                   <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-[#25D366] text-white px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-md whitespace-nowrap">
-                    Limited-Time Launch Pricing
+                    Instant Lifetime Access
                   </div>
                   
                   <div className="mt-4 mb-2">
@@ -939,7 +900,7 @@ export default function App() {
                      <p className="text-zinc-900 font-black text-xs uppercase tracking-widest mt-2 px-3 py-1 bg-yellow-200 inline-block rounded-md">One-time payment. No subscription.</p>
                   </div>
                   
-                  <Button onClick={handleCheckoutClick} className="w-full text-lg py-5 mb-4 hover:scale-[1.02]">
+                  <Button onClick={handleCheckoutClick} aria-label={`Get instant access for ${pricing.currencySymbol}${pricing.amount.toLocaleString()}`} className="w-full text-lg py-5 mb-4 hover:scale-[1.02]">
                     Get Instant Access
                   </Button>
                   
@@ -947,6 +908,7 @@ export default function App() {
                     href="https://wa.me/2348145956772?text=Hi%2C%20I%20saw%20the%20Chat%20Sales%20Rescue%20Kit%20ad%20and%20I%20want%20the%20free%2060-second%20chat%20check" 
                     target="_blank" 
                     rel="noopener noreferrer"
+                    aria-label="Chat with us on WhatsApp"
                     className="mb-4 text-sm font-bold text-zinc-600 border border-zinc-300 rounded-full py-2 px-6 hover:bg-zinc-100 transition-colors flex items-center justify-center gap-2 w-fit mx-auto"
                   >
                     <MessageCircle className="w-4 h-4 text-[#25D366]" />
@@ -1118,7 +1080,7 @@ export default function App() {
             You do not always need more leads first. Sometimes, you simply need a better system for how you handle the conversations you are already getting.
           </p>
           <div className="flex flex-col items-center gap-6">
-            <Button onClick={handleCheckoutClick} className="w-full sm:w-auto px-16 py-6 text-2xl relative overflow-hidden group">
+            <Button onClick={handleCheckoutClick} aria-label={`Get instant access for ${pricing.currencySymbol}${pricing.amount.toLocaleString()}`} className="w-full sm:w-auto px-16 py-6 text-2xl relative overflow-hidden group">
               <span className="relative z-10 flex items-center justify-center">
                 Get Instant Access — {pricing.currencySymbol}{pricing.amount.toLocaleString()}
                 <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -1130,25 +1092,23 @@ export default function App() {
               href="https://wa.me/2348145956772?text=Hi%2C%20I%20saw%20the%20Chat%20Sales%20Rescue%20Kit%20ad%20and%20I%20want%20the%20free%2060-second%20chat%20check" 
               target="_blank" 
               rel="noopener noreferrer"
+              aria-label="Chat with us on WhatsApp"
               className="text-sm font-bold text-zinc-600 border border-zinc-300 rounded-full py-2 px-6 hover:bg-zinc-100 transition-colors flex items-center justify-center gap-2 w-full sm:w-auto"
             >
               <MessageCircle className="w-4 h-4 text-[#25D366]" />
               Not sure yet? Chat with us on WhatsApp
             </a>
-
-            <div className="mt-2 text-red-500 font-bold text-sm bg-red-50 px-4 py-1.5 rounded-full flex items-center justify-center gap-2 border border-red-100 shadow-sm animate-pulse w-full sm:w-auto">
-              <Clock className="w-4 h-4" /> Limited Time: Secure current price
-            </div>
             
-            <p className="text-zinc-500 font-bold text-sm -mt-2 text-center">
+            <p className="text-zinc-500 font-bold text-sm text-center">
               Secure checkout via Selar. Instant access after payment.
             </p>
-            <p className="text-zinc-400 font-bold uppercase tracking-widest text-xs">
+            <p className="text-zinc-500 font-bold uppercase tracking-widest text-xs">
               Access the private portal and start improving today
             </p>
           </div>
         </div>
       </Section>
+      </main>
 
       {/* Footer */}
       <footer className="bg-white py-16 border-t border-zinc-100">
@@ -1163,7 +1123,7 @@ export default function App() {
           <div className="flex flex-col sm:flex-row justify-center items-stretch sm:items-center gap-4 sm:gap-6 mb-10 text-zinc-600 font-medium">
              <div className="flex items-center justify-center gap-2 bg-zinc-50 sm:bg-transparent py-4 sm:py-0 rounded-xl sm:rounded-none border border-zinc-100 sm:border-none">
                 <MessageSquare className="w-5 h-5 sm:w-4 sm:h-4 text-[#25D366]" />
-                <span className="text-sm sm:text-base">Support via WhatsApp:</span> <a href="https://wa.me/2348145956772" className="text-zinc-900 font-bold hover:text-[#128C7E] transition-colors pl-1 py-1">+234 814 595 6772</a>
+                <span className="text-sm sm:text-base">Support via WhatsApp:</span> <a href="https://wa.me/2348145956772" aria-label="Chat with support on WhatsApp" className="text-zinc-900 font-bold hover:text-[#128C7E] transition-colors pl-1 py-1">+234 814 595 6772</a>
              </div>
              <div className="hidden sm:block text-zinc-300">•</div>
              <div className="flex items-center justify-center gap-2 bg-zinc-50 sm:bg-transparent py-4 sm:py-0 rounded-xl sm:rounded-none border border-zinc-100 sm:border-none">
@@ -1187,20 +1147,21 @@ export default function App() {
       <div className="fixed bottom-0 left-0 right-0 p-3 z-40 sm:hidden">
         <div className="bg-white/95 backdrop-blur-xl p-3.5 rounded-[24px] border border-zinc-200 shadow-[0_-10px_40px_-5px_rgba(0,0,0,0.12)] flex flex-col items-center">
           <div className="w-full flex items-center justify-between px-1 mb-2 text-[10px] font-bold uppercase tracking-widest">
-            <span className="text-red-500 bg-red-50 px-2 py-0.5 rounded-full flex items-center gap-1 border border-red-100">
-              <Clock className="w-3 h-3" /> Price goes up soon
+            <span className="text-[#128C7E] font-bold flex items-center gap-1">
+              Lifetime Access
             </span>
             <span className="text-zinc-500 flex items-center gap-1">
               <Lock className="w-3 h-3 text-[#25D366]" /> Instant Access
             </span>
           </div>
-          <Button onClick={handleCheckoutClick} className="w-full py-3.5 text-base shadow-lg shadow-[#25D366]/20">
+          <Button onClick={handleCheckoutClick} aria-label={`Get instant access for ${pricing.currencySymbol}${pricing.amount.toLocaleString()}`} className="w-full py-3.5 text-base shadow-lg shadow-[#25D366]/20">
             Get Instant Access — {pricing.currencySymbol}{pricing.amount.toLocaleString()}
           </Button>
           <a 
             href="https://wa.me/2348145956772?text=Hi%2C%20I%20saw%20the%20Chat%20Sales%20Rescue%20Kit%20ad%20and%20I%20want%20the%20free%2060-second%20chat%20check" 
             target="_blank" 
             rel="noopener noreferrer"
+            aria-label="Chat with us on WhatsApp"
             className="w-full mt-2 py-2 px-3 text-xs font-bold text-[#128C7E] bg-green-50 hover:bg-green-100 rounded-xl border border-green-200/80 flex items-center justify-center gap-2 transition-colors"
           >
             <MessageCircle className="w-4 h-4 text-[#25D366]" />

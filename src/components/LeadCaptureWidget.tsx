@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { MessageCircle, Send, X, ShieldCheck, Loader2 } from 'lucide-react';
-import { GoogleGenAI } from "@google/genai";
 
 export default function LeadCaptureWidget() {
   const [isOpen, setIsOpen] = useState(false);
@@ -21,29 +20,31 @@ export default function LeadCaptureWidget() {
   }, [messages, isTyping]);
 
   useEffect(() => {
-    // Initialize chat only once
-    if (!chatRef.current) {
-      try {
-        const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-        chatRef.current = ai.chats.create({
-          model: "gemini-3-flash-preview",
-          config: {
-            systemInstruction: `You are an AI sales assistant for the 'Profit-Lock Method / Sales Rescue Kit'. 
-            This is a digital product tailored for Nigerian online business owners and vendors. 
-            It helps them recover lost sales from WhatsApp chats, DMs, and ghosting.
-            The kit includes a Script Bank, Lead Tracker, and Sales Leak Audit.
-            
-            Your goal is to answer their questions accurately and concisely, handle objections, and encourage them to buy the kit.
-            Keep your answers short (1-3 sentences max) and conversational. Use a confident, helpful, and slightly persuasive tone.
-            If they ask about price, mention it's ₦25,000 but currently discounted. Guide them to click "Get Full Access Now".
-            Do not use markdown formatting like **bold** in your responses as it will be displayed as raw text.`
-          }
-        });
-      } catch (e) {
-        console.error("Failed to initialize Gemini API", e);
-      }
+    // Initialize chat dynamically only once when widget is opened
+    if (isOpen && !chatRef.current) {
+      import('@google/genai').then(({ GoogleGenAI }) => {
+        try {
+          const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+          chatRef.current = ai.chats.create({
+            model: "gemini-3-flash-preview",
+            config: {
+              systemInstruction: `You are an AI sales assistant for the 'Profit-Lock Method / Sales Rescue Kit'. 
+              This is a digital product tailored for Nigerian online business owners and vendors. 
+              It helps them recover lost sales from WhatsApp chats, DMs, and ghosting.
+              The kit includes a Script Bank, Lead Tracker, and Sales Leak Audit.
+              
+              Your goal is to answer their questions accurately and concisely, handle objections, and encourage them to buy the kit.
+              Keep your answers short (1-3 sentences max) and conversational. Use a confident, helpful, and slightly persuasive tone.
+              If they ask about price, mention it's ₦25,000 but currently discounted. Guide them to click "Get Full Access Now".
+              Do not use markdown formatting like **bold** in your responses as it will be displayed as raw text.`
+            }
+          });
+        } catch (e) {
+          console.error("Failed to initialize Gemini API", e);
+        }
+      }).catch(err => console.error("Error loading genai SDK", err));
     }
-  }, []);
+  }, [isOpen]);
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -80,6 +81,7 @@ export default function LeadCaptureWidget() {
               animate={{ scale: 1 }}
               exit={{ scale: 0 }}
               onClick={() => setIsOpen(true)}
+              aria-label="Open AI sales chat assistant"
               className="w-14 h-14 bg-[#25D366] text-white rounded-full flex items-center justify-center shadow-2xl hover:scale-105 transition-transform"
             >
               <MessageCircle className="w-6 h-6" />
@@ -107,7 +109,7 @@ export default function LeadCaptureWidget() {
                    <p className="text-[10px] text-green-100 mt-1">AI Sales Representative</p>
                  </div>
                </div>
-               <button onClick={() => setIsOpen(false)} className="text-white/70 hover:text-white transition-colors">
+               <button onClick={() => setIsOpen(false)} aria-label="Close AI assistant" className="text-white/70 hover:text-white transition-colors">
                  <X className="w-5 h-5" />
                </button>
              </div>
@@ -144,7 +146,9 @@ export default function LeadCaptureWidget() {
              
              <div className="p-4 bg-white border-t border-zinc-100 shrink-0">
                 <form onSubmit={handleSendMessage} className="flex gap-2 mb-3">
+                   <label htmlFor="ai-chat-input" className="sr-only">Type a message</label>
                    <input 
+                     id="ai-chat-input"
                      type="text" 
                      placeholder="Type a message..."
                      value={inputValue}
@@ -154,6 +158,7 @@ export default function LeadCaptureWidget() {
                    />
                    <button 
                     type="submit" 
+                    aria-label="Send message"
                     disabled={!inputValue.trim() || isTyping}
                     className="bg-[#25D366] disabled:bg-[#25D366]/50 text-white w-11 h-11 rounded-xl flex items-center justify-center hover:bg-[#20bd5a] transition-colors shrink-0"
                    >

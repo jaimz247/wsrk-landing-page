@@ -41,6 +41,7 @@ export default function InteractiveChatDemo() {
           <button
             key={d.id}
             onClick={() => { setActiveDemo(index); setShowGood(false); }}
+            aria-label={`View ${d.title} demo`}
             className={`px-4 py-2 rounded-full text-xs font-bold transition-colors ${activeDemo === index ? 'bg-zinc-900 text-white' : 'bg-zinc-100 text-zinc-500 hover:bg-zinc-200'}`}
           >
             {d.title}
@@ -87,6 +88,7 @@ export default function InteractiveChatDemo() {
              <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/60 backdrop-blur-sm rounded-3xl border border-zinc-100">
                <button 
                  onClick={() => setShowGood(true)}
+                 aria-label="Apply Rescue Script"
                  className="cf-button-primary px-6 py-3 text-sm shadow-xl flex items-center gap-2"
                >
                  <CheckCircle2 className="w-4 h-4" />
@@ -102,7 +104,7 @@ export default function InteractiveChatDemo() {
                  <span className="font-bold text-[#128C7E] text-sm">The Fix (Win)</span>
                </div>
                {showGood && (
-                 <button onClick={() => setShowGood(false)} className="text-[10px] uppercase font-bold text-zinc-400 hover:text-zinc-900 flex items-center gap-1"><RefreshCw className="w-3 h-3"/> Reset</button>
+                 <button onClick={() => setShowGood(false)} aria-label="Reset demo" className="text-[10px] uppercase font-bold text-zinc-400 hover:text-zinc-900 flex items-center gap-1"><RefreshCw className="w-3 h-3"/> Reset</button>
                )}
              </div>
 

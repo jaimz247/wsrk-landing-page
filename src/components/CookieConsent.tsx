@@ -37,6 +37,7 @@ export default function CookieConsent() {
           <div className="max-w-4xl mx-auto bg-zinc-900 text-white p-6 rounded-2xl shadow-2xl border border-zinc-800 pointer-events-auto flex flex-col sm:flex-row items-center justify-between gap-6 relative">
             <button 
               onClick={handleReject}
+              aria-label="Close cookie notice"
               className="absolute top-4 right-4 text-zinc-400 hover:text-white transition-colors sm:hidden"
             >
               <X className="w-5 h-5" />

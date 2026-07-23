@@ -312,6 +312,7 @@ export default function CheckoutModal({ isOpen, onClose, pricing, changeCountry,
             </div>
             <button 
               onClick={onClose}
+              aria-label="Close checkout modal"
               className="w-10 h-10 rounded-full bg-white border border-zinc-200 flex items-center justify-center text-zinc-400 hover:text-zinc-900 hover:border-zinc-900 transition-colors"
             >
               <X className="w-5 h-5" />
@@ -360,12 +361,13 @@ export default function CheckoutModal({ isOpen, onClose, pricing, changeCountry,
 
                 <div className="space-y-5">
                   <div>
-                    <label className="block text-sm font-bold text-zinc-900 mb-2">Full Name</label>
+                    <label htmlFor="checkout-full-name" className="block text-sm font-bold text-zinc-900 mb-2">Full Name</label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                         <User className="w-5 h-5 text-zinc-400" />
                       </div>
                       <input 
+                        id="checkout-full-name"
                         type="text"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
@@ -375,12 +377,13 @@ export default function CheckoutModal({ isOpen, onClose, pricing, changeCountry,
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm font-bold text-zinc-900 mb-2">Email Address</label>
+                    <label htmlFor="checkout-email-addr" className="block text-sm font-bold text-zinc-900 mb-2">Email Address</label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                         <Mail className="w-5 h-5 text-zinc-400" />
                       </div>
                       <input 
+                        id="checkout-email-addr"
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
@@ -449,13 +452,14 @@ export default function CheckoutModal({ isOpen, onClose, pricing, changeCountry,
 
                 {/* Coupon / Referral Code Section */}
                 <div className="mb-6 bg-zinc-50 p-4 rounded-xl border border-zinc-200">
-                  <label className="block text-xs font-bold text-zinc-900 mb-2 uppercase tracking-wider">Referral or Coupon Code</label>
+                  <label htmlFor="coupon-code-input" className="block text-xs font-bold text-zinc-900 mb-2 uppercase tracking-wider">Referral or Coupon Code</label>
                   <div className="flex gap-2">
                     <div className="relative flex-1">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <Tag className="w-4 h-4 text-zinc-400" />
                       </div>
                       <input 
+                        id="coupon-code-input"
                         type="text"
                         value={couponCode}
                         onChange={(e) => {
@@ -483,6 +487,7 @@ export default function CheckoutModal({ isOpen, onClose, pricing, changeCountry,
                     {discount > 0 ? (
                       <button 
                         onClick={removeCoupon}
+                        aria-label="Remove coupon code"
                         className="px-4 py-2.5 bg-red-50 text-red-600 border border-red-200 text-sm font-bold rounded-lg hover:bg-red-100 transition-colors flex items-center justify-center min-w-[80px]"
                       >
                         Remove
@@ -491,6 +496,7 @@ export default function CheckoutModal({ isOpen, onClose, pricing, changeCountry,
                       <button 
                         onClick={handleApplyCoupon}
                         disabled={isApplyingCoupon || !couponCode.trim()}
+                        aria-label="Apply coupon code"
                         className="px-4 py-2.5 bg-zinc-900 text-white text-sm font-bold rounded-lg hover:bg-zinc-800 transition-colors disabled:opacity-50 flex items-center justify-center min-w-[80px]"
                       >
                         {isApplyingCoupon ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Apply'}
@@ -515,6 +521,7 @@ export default function CheckoutModal({ isOpen, onClose, pricing, changeCountry,
                 <div className="space-y-4">
                   <button 
                     onClick={() => setStep(3)}
+                    aria-label="Confirm and proceed to payment"
                     className="w-full py-4 bg-[#25D366] text-white rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-[#20bd5a] transition-colors"
                   >
                     Confirm & Proceed to Payment
@@ -522,6 +529,7 @@ export default function CheckoutModal({ isOpen, onClose, pricing, changeCountry,
                   </button>
                   <button 
                     onClick={() => setStep(1)}
+                    aria-label="Go back to details"
                     className="w-full py-3 text-sm font-bold text-zinc-500 hover:text-zinc-900 transition-colors"
                   >
                     Back to Details
@@ -547,7 +555,8 @@ export default function CheckoutModal({ isOpen, onClose, pricing, changeCountry,
                   <div className="relative">
                     <button 
                       onClick={() => setShowCountrySelect(!showCountrySelect)}
-                      className="flex items-center gap-2 text-sm font-bold text-zinc-700 hover:text-zinc-900 transition-colors bg-zinc-50 px-4 py-2 rounded-full border border-zinc-200"
+                      aria-label="Select country or currency"
+                      className="flex items-center gap-2 text-sm font-bold text-zinc-700 hover:text-[#128C7E] transition-colors bg-zinc-50 px-4 py-2 rounded-full border border-zinc-200"
                     >
                       <Globe className="w-4 h-4" />
                       {pricing.country} ({pricing.currencyCode})
@@ -572,7 +581,8 @@ export default function CheckoutModal({ isOpen, onClose, pricing, changeCountry,
                                   setCouponCode('');
                                   setCouponMessage(null);
                                 }}
-                                className={`w-full text-left px-4 py-2 text-sm font-medium hover:bg-zinc-50 transition-colors ${p.code === pricing.code ? 'text-[#25D366] bg-green-50/50' : 'text-zinc-700'}`}
+                                aria-label={`Select ${p.country} currency`}
+                                className={`w-full text-left px-4 py-2 text-sm font-medium hover:bg-zinc-50 transition-colors ${p.code === pricing.code ? 'text-[#128C7E] bg-green-50/50' : 'text-zinc-700'}`}
                               >
                                 {p.country} ({p.currencySymbol})
                               </button>
@@ -607,6 +617,7 @@ export default function CheckoutModal({ isOpen, onClose, pricing, changeCountry,
                   {finalPrice === 0 ? (
                     <button 
                       onClick={() => handleSuccess(`FREE-${Date.now()}`)}
+                      aria-label="Claim Free Access"
                       className="w-full p-4 bg-[#25D366] text-white font-bold rounded-xl flex items-center justify-center gap-2 hover:bg-[#20bd5a] transition-colors"
                     >
                       <span>Claim Free Access</span>
@@ -710,6 +721,7 @@ export default function CheckoutModal({ isOpen, onClose, pricing, changeCountry,
                         <button 
                           onClick={selectedGateway === 'paystack' ? handlePaystack : handleFlutterwave}
                           disabled={isProcessing}
+                          aria-label={`Pay with ${selectedGateway === 'paystack' ? 'Paystack' : 'Flutterwave'}`}
                           className="w-full py-4 bg-[#25D366] text-white rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-[#20bd5a] transition-colors disabled:opacity-50"
                         >
                           {isProcessing ? (
@@ -728,6 +740,7 @@ export default function CheckoutModal({ isOpen, onClose, pricing, changeCountry,
                   <button 
                     onClick={() => setStep(2)}
                     disabled={isProcessing}
+                    aria-label="Go back to order summary"
                     className="w-full py-3 text-sm font-bold text-zinc-500 hover:text-zinc-900 transition-colors"
                   >
                     Back to Order Summary
