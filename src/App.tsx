@@ -36,7 +36,6 @@ import {
   ArrowUp,
   MessageCircle
 } from 'lucide-react';
-import { motion, AnimatePresence, useInView, animate, useScroll, useSpring } from 'motion/react';
 
 import { Link } from 'react-router-dom';
 import { useGeolocationPricing } from './hooks/useGeolocationPricing';
@@ -90,23 +89,11 @@ const Button = ({
   );
 };
 
-const Section = ({ children, className = "", id = "", containerClassName = "", disableAnimation = false }: { children: React.ReactNode; className?: string; id?: string; containerClassName?: string; disableAnimation?: boolean }) => (
+const Section = ({ children, className = "", id = "", containerClassName = "" }: { children: React.ReactNode; className?: string; id?: string; containerClassName?: string }) => (
   <section id={id} className={`cf-section overflow-hidden ${className}`}>
-    {disableAnimation ? (
-      <div className={`max-w-6xl mx-auto relative ${containerClassName}`}>
-        {children}
-      </div>
-    ) : (
-      <motion.div 
-        initial={{ opacity: 0, y: 40 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-50px" }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-        className={`max-w-6xl mx-auto relative ${containerClassName}`}
-      >
-        {children}
-      </motion.div>
-    )}
+    <div className={`max-w-6xl mx-auto relative ${containerClassName}`}>
+      {children}
+    </div>
   </section>
 );
 
@@ -129,44 +116,48 @@ const FAQItem = ({ question, answer }: { question: string; answer: string; key?:
           <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${isOpen ? 'rotate-180 text-white' : 'text-zinc-400'}`} />
         </div>
       </button>
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div 
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            className="overflow-hidden"
-          >
-            <p className="pb-8 text-zinc-600 leading-relaxed max-w-2xl">
-              {answer}
-            </p>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {isOpen && (
+        <div className="overflow-hidden transition-all duration-300">
+          <p className="pb-8 text-zinc-600 leading-relaxed max-w-2xl">
+            {answer}
+          </p>
+        </div>
+      )}
     </div>
   );
 };
 
-const AnimatedCounter = ({ value, suffix = "", prefix = "" }: { value: number, suffix?: string, prefix?: string }) => {
+const AnimatedCounter = ({ value, suffix = "", prefix = "" }: { value: number; suffix?: string; prefix?: string }) => {
+  const [count, setCount] = useState(0);
   const nodeRef = React.useRef<HTMLSpanElement>(null);
-  const inView = useInView(nodeRef, { once: true, margin: "-50px" });
 
   useEffect(() => {
     const node = nodeRef.current;
-    if (!node || !inView) return;
-    
-    const controls = animate(0, value, {
-      duration: 2,
-      ease: "easeOut",
-      onUpdate(val) {
-        node.textContent = `${prefix}${Math.round(val)}${suffix}`;
-      }
-    });
-    
-    return () => controls.stop();
-  }, [value, prefix, suffix, inView]);
+    if (!node) return;
 
-  return <span ref={nodeRef}>0</span>;
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        let startTimestamp: number | null = null;
+        const duration = 2000;
+        const step = (timestamp: number) => {
+          if (!startTimestamp) startTimestamp = timestamp;
+          const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+          const easeOut = 1 - (1 - progress) * (1 - progress);
+          setCount(Math.round(easeOut * value));
+          if (progress < 1) {
+            requestAnimationFrame(step);
+          }
+        };
+        requestAnimationFrame(step);
+        observer.disconnect();
+      }
+    }, { threshold: 0.1 });
+
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [value]);
+
+  return <span ref={nodeRef}>{prefix}{count.toLocaleString()}{suffix}</span>;
 };
 
 // --- Main App ---
@@ -174,6 +165,7 @@ const AnimatedCounter = ({ value, suffix = "", prefix = "" }: { value: number, s
 export default function App() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const { pricing, changeCountry, allPricing } = useGeolocationPricing();
 
@@ -188,10 +180,6 @@ export default function App() {
 
     // TEMPORARY: Redirect to Selar for initial Nigeria-only launch
     window.location.href = "https://selar.com/44447077s5";
-    
-    // To revert back to the direct checkout modal later, comment out the line above
-    // and uncomment the line below:
-    // setIsCheckoutOpen(true);
   };
 
   const scrollToTop = () => {
@@ -202,41 +190,34 @@ export default function App() {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
       setShowScrollTop(window.scrollY > 200);
+
+      const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
+      if (totalHeight > 0) {
+        setScrollProgress((window.scrollY / totalHeight) * 100);
+      }
     };
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
-  const { scrollYProgress } = useScroll();
-  const scaleX = useSpring(scrollYProgress, {
-    stiffness: 100,
-    damping: 30,
-    restDelta: 0.001
-  });
 
   return (
     <div className="min-h-screen bg-white text-zinc-900 font-sans selection:bg-green-100 selection:text-green-900 antialiased">
       {/* Scroll Progress Bar */}
-      <motion.div 
-        className="fixed top-0 left-0 right-0 h-1 bg-[#25D366] z-[100] origin-left pointer-events-none shadow-[0_0_8px_#25D366]"
-        style={{ scaleX }}
+      <div 
+        className="fixed top-0 left-0 h-1 bg-[#25D366] z-[100] transition-all duration-75 pointer-events-none shadow-[0_0_8px_#25D366]"
+        style={{ width: `${scrollProgress}%` }}
       />
       
       {/* Scroll to Top Button */}
-      <AnimatePresence>
-        {showScrollTop && (
-          <motion.button
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 20 }}
-            onClick={scrollToTop}
-            className="fixed bottom-24 sm:bottom-8 right-6 z-[70] w-12 h-12 bg-zinc-900 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-zinc-800 transition-colors"
-            aria-label="Scroll to top"
-          >
-            <ArrowUp className="w-5 h-5" />
-          </motion.button>
-        )}
-      </AnimatePresence>
+      {showScrollTop && (
+        <button
+          onClick={scrollToTop}
+          className="fixed bottom-24 sm:bottom-8 right-6 z-[70] w-12 h-12 bg-zinc-900 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-zinc-800 transition-opacity duration-300"
+          aria-label="Scroll to top"
+        >
+          <ArrowUp className="w-5 h-5" />
+        </button>
+      )}
 
       {/* Top Value Banner */}
       <div className="bg-zinc-900 text-white text-center py-2.5 px-4 text-xs sm:text-sm font-bold flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 relative z-[60]">
@@ -275,7 +256,7 @@ export default function App() {
       {/* Main Content Landmark */}
       <main id="main-content">
         {/* Hero Section */}
-      <Section disableAnimation className="pt-32 pb-20 md:pt-40 md:pb-32 relative overflow-hidden">
+      <Section className="pt-32 pb-20 md:pt-40 md:pb-32 relative overflow-hidden">
         {/* Background Accents */}
         <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-[800px] h-[800px] bg-green-50 rounded-full blur-[120px] opacity-40 -z-10" />
         <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/4 w-[600px] h-[600px] bg-blue-50 rounded-full blur-[100px] opacity-30 -z-10" />
@@ -1003,12 +984,8 @@ export default function App() {
                 border: "border-2 border-[#25D366] shadow-xl shadow-green-500/5"
               }
             ].map((item, i) => (
-              <motion.div 
+              <div 
                 key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{ duration: 0.5, delay: i * 0.2 }}
                 className={`p-8 rounded-3xl bg-white ${item.border} relative overflow-hidden`}
               >
                 <div className={`absolute -right-4 -top-4 text-9xl font-black ${item.step === 3 ? 'text-green-50' : 'text-zinc-50'} opacity-50 pointer-events-none`}>{item.step}</div>
@@ -1017,7 +994,7 @@ export default function App() {
                 </div>
                 <h3 className="text-xl font-bold mb-3 relative z-10">{item.title}</h3>
                 <p className="text-zinc-500 font-medium leading-relaxed relative z-10">{item.desc}</p>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
