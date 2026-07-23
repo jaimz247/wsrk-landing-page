@@ -40,9 +40,9 @@ import { motion, AnimatePresence, useInView, animate, useScroll, useSpring } fro
 
 import { Link } from 'react-router-dom';
 import { useGeolocationPricing } from './hooks/useGeolocationPricing';
-import HeroAnimation from './components/HeroAnimation';
 
 // Lazy loaded components for code-splitting and faster initial page load
+const HeroAnimation = React.lazy(() => import('./components/HeroAnimation'));
 const CheckoutModal = React.lazy(() => import('./components/CheckoutModal'));
 const InteractiveChatDemo = React.lazy(() => import('./components/InteractiveChatDemo'));
 const LostRevenueCalculator = React.lazy(() => import('./components/LostRevenueCalculator'));
@@ -90,17 +90,23 @@ const Button = ({
   );
 };
 
-const Section = ({ children, className = "", id = "", containerClassName = "" }: { children: React.ReactNode; className?: string; id?: string; containerClassName?: string }) => (
+const Section = ({ children, className = "", id = "", containerClassName = "", disableAnimation = false }: { children: React.ReactNode; className?: string; id?: string; containerClassName?: string; disableAnimation?: boolean }) => (
   <section id={id} className={`cf-section overflow-hidden ${className}`}>
-    <motion.div 
-      initial={{ opacity: 0, y: 40 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-50px" }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
-      className={`max-w-6xl mx-auto relative ${containerClassName}`}
-    >
-      {children}
-    </motion.div>
+    {disableAnimation ? (
+      <div className={`max-w-6xl mx-auto relative ${containerClassName}`}>
+        {children}
+      </div>
+    ) : (
+      <motion.div 
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-50px" }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        className={`max-w-6xl mx-auto relative ${containerClassName}`}
+      >
+        {children}
+      </motion.div>
+    )}
   </section>
 );
 
@@ -269,17 +275,13 @@ export default function App() {
       {/* Main Content Landmark */}
       <main id="main-content">
         {/* Hero Section */}
-      <Section className="pt-32 pb-20 md:pt-40 md:pb-32 relative overflow-hidden">
+      <Section disableAnimation className="pt-32 pb-20 md:pt-40 md:pb-32 relative overflow-hidden">
         {/* Background Accents */}
         <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-[800px] h-[800px] bg-green-50 rounded-full blur-[120px] opacity-40 -z-10" />
         <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/4 w-[600px] h-[600px] bg-blue-50 rounded-full blur-[100px] opacity-30 -z-10" />
         
         <div className="max-w-4xl mx-auto text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-          >
+          <div>
             <Badge>Powered by the Profit-Lock Method</Badge>
             <h1 className="cf-heading text-5xl md:text-7xl lg:text-[5.5rem] mb-8">
               Turn 'I'll Get Back To You' Into <span className="text-[#25D366]">'Payment Sent'</span><br />
@@ -289,7 +291,9 @@ export default function App() {
               The exact copy-paste scripts and follow-up sequence proven to convert inquiries into paid customers in under 5 minutes.
             </p>
 
-            <HeroAnimation />
+            <React.Suspense fallback={<div className="h-[180px] md:h-[220px] my-8" />}>
+              <HeroAnimation />
+            </React.Suspense>
             
             <div className="flex flex-col items-center gap-6">
               <div className="flex flex-col items-center w-full max-w-xl">
@@ -370,7 +374,7 @@ export default function App() {
               </p>
             </div>
             
-          </motion.div>
+          </div>
         </div>
 
         {/* Social Proof Bar */}
